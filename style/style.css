@@ -224,6 +224,29 @@ h3 {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
+.new-label {
+  position: relative;
+  display: inline-block;
+  padding: 0.2em 0.4em;
+  color: white;
+  background-color: #ff0000;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.new-label::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: rgba(255, 0, 0, 0.5);
+  z-index: -1;
+  filter: blur(8px);
+  border-radius: 4px;
+}
+
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   nav {
     -webkit-backdrop-filter: blur(10px);
