@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Processo di Norimberga</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a0a0f;
+            --secondary: #1a1a2e;
+            --accent: #e94560;
+            --gold: #f39c12;
+            --cyan: #00d4ff;
+            --text-light: #ffffff;
+            --text-dark: #2c3e50;
+            --text-muted: #7f8c8d;
+            --bg-light: #f8f9fa;
+            --bg-dark: #0f0f23;
+            --glass: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.3);
+            --neon-glow: 0 0 20px var(--cyan), 0 0 40px var(--cyan), 0 0 60px var(--cyan);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at center, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section con Parallax */
+        .hero {
+            height: 100vh;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
+                url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--accent) 0%, transparent 70%);
+            opacity: 0.15;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: heroAppear 2s ease-out;
+        }
+
+        @keyframes heroAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 6rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-light) 0%, var(--gold) 50%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: titleGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% {
+                filter: brightness(1);
+            }
+
+            100% {
+                filter: brightness(1.2);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            animation: subtitleSlide 2s ease-out 0.5s both;
+        }
+
+        @keyframes subtitleSlide {
+            0% {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            100% {
+                opacity: 0.9;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            text-align: center;
+            opacity: 0;
+            animation: statPop 1s ease-out forwards;
+        }
+
+        .hero-stat:nth-child(1) {
+            animation-delay: 1s;
+        }
+
+        .hero-stat:nth-child(2) {
+            animation-delay: 1.2s;
+        }
+
+        .hero-stat:nth-child(3) {
+            animation-delay: 1.4s;
+        }
+
+        @keyframes statPop {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            80% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .hero-stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            display: block;
+        }
+
+        .hero-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-arrow {
+            font-size: 2rem;
+            color: var(--gold);
+            text-shadow: var(--neon-glow);
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            40% {
+                transform: translateX(-50%) translateY(-15px);
+            }
+
+            60% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        /* Navigation futuristica */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        nav a:hover::before {
+            left: 100%;
+        }
+
+        nav a:hover {
+            background: var(--glass);
+            color: var(--cyan);
+            transform: translateY(-3px);
+            border-color: var(--cyan);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Sezioni con effetti particellari */
+        section {
+            padding: 8rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--gold), var(--cyan), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--cyan));
+            border-radius: 2px;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Cards con effetti avanzati */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin: 3rem 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 3rem;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--gold), var(--cyan));
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+
+        .card-icon::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--cyan), var(--gold), var(--accent));
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover .card-icon::after {
+            opacity: 1;
+        }
+
+        /* Timeline spettacolare */
+        .timeline-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--gold) 50%, var(--cyan) 100%);
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: var(--neon-glow);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 4rem 0;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.6s ease;
+        }
+
+        .timeline-item.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .timeline-item:nth-child(even) {
+            transform: translateX(50px);
+        }
+
+        .timeline-item:nth-child(even).animate {
+            transform: translateX(0);
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: 0;
+            margin-right: auto;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .timeline-content:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 4px solid var(--primary);
+            box-shadow:
+                0 0 0 4px rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(233, 69, 96, 0.6);
+            z-index: 10;
+        }
+
+        .timeline-date {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .timeline-title {
+            color: var(--cyan);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Charges Grid con effetti wow */
+        .charges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .charge-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .charge-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    var(--accent),
+                    transparent,
+                    var(--gold),
+                    transparent,
+                    var(--cyan),
+                    transparent);
+            animation: rotate 8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .charge-card:hover::before {
+            opacity: 0.15;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .charge-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--cyan);
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                0 0 50px rgba(0, 212, 255, 0.3);
+        }
+
+        .charge-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+
+        .charge-icon::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: linear-gradient(45deg, var(--cyan), var(--gold), var(--accent));
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .charge-card:hover .charge-icon::after {
+            opacity: 1;
+        }
+
+        .charge-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        /* Sezione immagini con galleria */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(233, 69, 96, 0.8), rgba(243, 156, 18, 0.8));
+            opacity: 0;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        /* Stats con contatori animati */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--cyan);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(243, 156, 18, 0.6);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer futuristico */
+        footer {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--gold), var(--cyan));
+            animation: gradientShift 4s ease-in-out infinite;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-stats {
+                gap: 1.5rem;
+            }
+
+            section {
+                padding: 4rem 1rem;
+            }
+
+            .nav-container {
+                gap: 0.5rem;
+            }
+
+            nav a {
+                font-size: 0.9rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .timeline-line {
+                left: 30px;
+                transform: none;
+            }
+
+            .timeline-content {
+                width: calc(100% - 80px);
+                margin-left: 80px !important;
+                margin-right: 0 !important;
+            }
+
+            .timeline-marker {
+                left: 30px;
+                transform: translateX(-50%);
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Particle system */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--cyan);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: particleFloat 20s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Particle System -->
+    <div class="particles" id="particles"></div>
+
+    <nav>
+        <div class="nav-container">
+            <a href="#genesi"><i class="fas fa-university"></i> Genesi</a>
+            <a href="#luogo"><i class="fas fa-map-marker-alt"></i> Luogo</a>
+            <a href="#accuse"><i class="fas fa-gavel"></i> Accuse</a>
+            <a href="#sentenza"><i class="fas fa-scroll"></i> Sentenza</a>
+            <a href="#eredita"><i class="fas fa-star"></i> Eredità</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Il Processo di Norimberga</h1>
+            <p class="hero-subtitle">Il tribunale che ha cambiato per sempre il diritto internazionale e la giustizia
+                mondiale</p>
+
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-number">1945</span>
+                    <span class="hero-stat-label">Anno Storico</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">24</span>
+                    <span class="hero-stat-label">Imputati</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">403</span>
+                    <span class="hero-stat-label">Sentenze</span>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <i class="fas fa-arrow-down scroll-arrow"></i>
+            </div>
+        </div>
+    </section>
+
+    <section id="genesi">
+        <div class="section-header">
+            <h2>Genesi del Processo</h2>
+            <p>Il Processo di Norimberga è stato istituito per giudicare i crimini di guerra nazisti dopo la Seconda
+                Guerra Mondiale.</p>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-university"></i></div>
+                <h3>Origini</h3>
+                <p>Il processo è nato dalla necessità di stabilire un precedente giuridico per i crimini contro
+                    l'umanità.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-globe"></i></div>
+                <h3>Giurisdizione Internazionale</h3>
+                <p>Per la prima volta, un tribunale internazionale ha giudicato leader politici e militari per crimini
+                    di guerra.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
+                <h3>Principi Fondamentali</h3>
+                <p>Il processo ha stabilito che i crimini contro l'umanità non possono essere giustificati da ordini
+                    superiori.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="luogo">
+        <div class="section-header">
+            <h2>Luogo del Processo</h2>
+            <p>Il processo si è svolto nella città di Norimberga, in Germania, simbolo della giustizia post-bellica.</p>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <h3>Norimberga</h3>
+                <p>Scelta per il suo significato storico e simbolico, la città ha ospitato il tribunale tra il 1945 e il
+                    1946.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-building"></i></div>
+                <h3>Palazzo di Giustizia</h3>
+                <p>Il processo si è tenuto nel Palazzo di Giustizia di Norimberga, che oggi ospita un museo dedicato.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-history"></i></div>
+                <h3>Simbolo di Giustizia</h3>
+                <p>Norimberga è diventata un simbolo della lotta contro l'impunità e per la giustizia internazionale.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="accuse">
+        <div class="section-header">
+            <h2>Le Accuse</h2>
+            <p>Gli imputati sono stati accusati di crimini contro la pace, crimini di guerra e crimini contro l'umanità.
+            </p>
+        </div>
+        <div class="charges-grid">
+            <div class="charge-card">
+                <div class="charge-icon"><i class="fas fa-dove"></i></div>
+                <h3 class="charge-title">Crimini contro la Pace</h3>
+                <p>Accuse relative alla pianificazione e all'invasione di paesi sovrani.</p>
+            </div>
+            <div class="charge-card">
+                <div class="charge-icon"><i class="fas fa-skull-crossbones"></i></div>
+                <h3 class="charge-title">Crimini di Guerra</h3>
+                <p>Violazioni delle leggi e consuetudini di guerra, inclusi massacri e torture.</p>
+            </div>
+            <div class="charge-card">
+                <div class="charge-icon"><i class="fas fa-users-slash"></i></div>
+                <h3 class="charge-title">Crimini contro l'Umanità</h3>
+                <p>Genocidi, persecuzioni politiche e razziali, schiavitù e deportazioni forzate.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="sentenza">
+        <div class="section-header">
+            <h2>Sentenza e Conseguenze</h2>
+            <p>Le sentenze hanno avuto un impatto duraturo sul diritto internazionale e sulla giustizia globale.</p>
+        </div>
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+            <div class="timeline-item animate">
+                <div class="timeline-marker">1</div>
+                <div class="timeline-content">
+                    <span class="timeline-date">20 Novembre 1945</span>
+                    <h3 class="timeline-title">Inizio del Processo</h3>
+                    <p>Il processo inizia con l'apertura delle udienze contro i principali leader nazisti.</p>
+                </div>
+            </div>
+            <div class="timeline-item animate">
+                <div class="timeline-marker">2</div>
+                <div class="timeline-content">
+                    <span class="timeline-date">1 Ottobre 1946</span>
+                    <h3 class="timeline-title">Sentenze Emesse</h3>
+                    <p>Vengono emesse le prime sentenze, con 12 condanne a morte e altre pene detentive.</p>
+                </div>
+            </div>
+            <div class="timeline-item animate">
+                <div class="timeline-marker">3</div>
+                <div class="timeline-content">
+                    <span class="timeline-date">1948</span>
+                    <h3 class="timeline-title">Creazione della Convenzione sui Crimini di Guerra</h3>
+                    <p>Il processo porta alla creazione di norme internazionali per prevenire futuri crimini di guerra.
+                    </p>
+                </div>
+            </div>
+            <div class="timeline-item animate">
+                <div class="timeline-marker">4</div>
+                <div class="timeline-content">
+                    <span class="timeline-date">1950</span>
+                    <h3 class="timeline-title">I Principi di Norimberga</h3>
+                    <p>Vengono stabiliti i principi fondamentali del diritto internazionale, influenzando i tribunali
+                        futuri.</p>
+                </div>
+            </div>
+            <div class="timeline-item animate">
+                <div class="timeline-marker">5</div>
+                <div class="timeline-content">
+                    <span class="timeline-date">1973</span>
+                    <h3 class="timeline-title">Tribunale di Tokyo</h3>
+                    <p>Il processo di Tokyo estende i principi di Norimberga ai crimini commessi in Asia durante la
+                        guerra.</p>
+                </div>
+            </div>
+            <div class="timeline-item animate">
+                <div class="timeline-marker">6</div>
+                <div class="timeline-content">
+                    <span class="timeline-date">1993</span>
+                    <h3 class="timeline-title">Tribunale per l'ex Jugoslavia</h3>
+                    <p>Il tribunale di L'Aia applica i principi di Norimberga ai crimini di guerra nei Balcani.</p>
+                </div>
+            </div>
+            <div class="timeline-item animate">
+                <div class="timeline-marker">7</div>
+                <div class="timeline-content">
+                    <span class="timeline-date">2002</span>
+                    <h3 class="timeline-title">Corte Penale Internazionale</h3>
+                    <p>La CPI adotta i principi di Norimberga per perseguire crimini internazionali in tutto il mondo.
+                    </p>
+                </div>
+            </div>
+            <div class="timeline-item animate">
+                <div class="timeline-marker">8</div>
+                <div class="timeline-content">
+                    <span class="timeline-date">Oggi</span>
+                    <h3 class="timeline-title">Eredità Duratura</h3>
+                    <p>Il processo di Norimberga continua a influenzare il diritto internazionale e la lotta contro
+                        l'impunità.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="eredita">
+        <div class="section-header">
+            <h2>Eredità del Processo</h2>
+            <p>Il Processo di Norimberga ha stabilito un precedente fondamentale per la giustizia internazionale.</p>
+        </div>
+        <div class="image-gallery">
+            <div class="gallery-item">
+                <img src="https://imgs.search.brave.com/JgzUT17km6YQU1ulnP6yu5A31ZFn1tKh5i6H7-g_1GI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vZmRMWnZW/RU9xTGxlVVN6X3BW/VHMyOEVMSlR0QWho/aEdRUVZKd1FuazdH/Zy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTl0/WldScC9ZUzVuWlhS/MGVXbHRZV2RsL2N5/NWpiMjB2YVdRdk1U/QTIvTlRBd01ERXdM/M0JvYjNSdi9MMkYw/TFhSb1pTMXVkWEps/L2JXSmxjbWN0ZEhK/cFlXeHovTFdKbFpt/OXlaUzEwYUdVdC9h/VzUwWlhKdVlYUnBi/MjVoL2JDMXRhV3hw/ZEdGeWVTMTAvY21s/aWRXNWhiQzEzWVhN/dC9jSEpsYzJsa1pX/UXRiM1psL2NpMWll/UzF6YVhJdWFuQm4v/UDNNOU5qRXllRFl4/TWlaMy9QVEFtYXow/eU1DWmpQV1l3L2JY/Wk9jM2M1Y1dOUlpq/WjUvYWw4dGNXWlRR/emsyZWtkcy9aWE5o/VGxFM00xWjZkM2xR/L1lVWklZMmM5"
+                    alt="Immagine 1">
+                <div class="gallery-overlay">Il Tribunale di Norimberga</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://imgs.search.brave.com/hmhtT4pk4Z0f8WM0AfMEEqnRaSGQhxq0-q79uKApsK0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vVk9ma0l6/TV96OVRDZ3J6eXow/R1NwMGY4SXBZLWNv/dUQtX2szTV9faFFp/RS9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTl0/WldScC9ZUzVuWlhS/MGVXbHRZV2RsL2N5/NWpiMjB2YVdRdk5q/RTEvTXpBNU1EUXdM/M0JvYjNSdi9MMmhs/Y20xaGJtNHRaMjls/L2NtbHVaeTFtYjNW/dVpHVnkvTFc5bUxY/Um9aUzFuWlhOMC9Z/WEJ2TFdGdVpDMW1i/M0p0L1pYSXRhR1Zo/WkMxdlppMTAvYUdV/dGJIVm1kSGRoWm1a/bC9MWFJsYzNScFpt/bGxjeTFtL2NtOXRM/WFJvWlM1cWNHY18v/Y3owMk1USjROakV5/Sm5jOS9NQ1pyUFRJ/d0ptTTlOWGR4L1Ez/TmxSbXhSWDNOTk0w/cE8vYmxoWVdGVklO/VlZqTUdGdi9jR1ZK/YWpCNlkyVkVTbU5R/L01qUXhhejA"
+                    alt="Immagine 2">
+                <div class="gallery-overlay">Hermann Goering</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://imgs.search.brave.com/d4BmzoXAtxnzjB4NpYOon1Y_6i0ZA4KeoEPZxaqLQkk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vOEFUb1Q1/R21vX3FLQUgzaElT/cEc0NHJMX1lQb2Rp/UWtUb29JUmlDZGtF/WS9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTl0/WldScC9ZUzVuWlhS/MGVXbHRZV2RsL2N5/NWpiMjB2YVdRdk1U/VTQvTnpRek56Y3hM/M0JvYjNSdi9MMmRs/Y20xaGJpMTNZWEl0/L1kzSnBiV1Z6TFdS/bFptVnUvWkdGdWRI/TXRjMmwwZEdsdS9a/eTFwYmkxaExXTnZk/WEowL2NtOXZiUzF2/WmkxMGFHVXQvYVc1/MFpYSnVZWFJwYjI1/aC9iQzEwY21saWRX/NWhiQzFoL2JXOXVa/eTEwYUdWdExtcHcv/Wno5elBUWXhNbmcy/TVRJbS9kejB3Sm1z/OU1qQW1ZejFIL1dY/TTBhR2cwY0hsMGVV/eFEvZDA5UVpuWkxU/R3hETmxaWC9XR2Mz/VURsbU1VUXlNRFV0/L1pWWmxlRUp6UFE"
+                    alt="Immagine 3">
+                <div class="gallery-overlay">Imputati seduti nell'aula</div>
+            </div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-balance-scale"></i></div>
+                <span class="stat-number" data-count="100">0</span>
+                <span class="stat-label">Processi Internazionali Ispirati</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-globe"></i></div>
+                <span class="stat-number" data-count="50">0</span>
+                <span class="stat-label">Nazioni Partecipanti</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <span class="stat-number" data-count="2000">0</span>
+                <span class="stat-label">Vittime Riconosciute</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-book"></i></div>
+                <span class="stat-number" data-count="500">0</span>
+                <span class="stat-label">Libri e Pubblicazioni</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-flag"></i></div>
+                <span class="stat-number" data-count="30">0</span>
+                <span class="stat-label">Convenzioni Internazionali</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-history"></i></div>
+                <span class="stat-number" data-count="75">0</span>
+                <span class="stat-label">Anni di Eredità</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Processo di Norimberga</div>
+            <p><strong>Disclaimer:</strong> Questo sito è stato creato esclusivamente per scopi didattici e di
+                presentazione scolastica. Non ha finalità commerciali o di lucro. Le immagini e i materiali utilizzati
+                possono essere soggetti a copyright dei rispettivi proprietari. Tutti i contenuti saranno rimossi al
+                termine della presentazione. Per qualsiasi richiesta di rimozione contattare <a
+                    href="mailto:tryvaaldev@proton.me">tryvaaldev@proton.me</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Funzione per generare particelle
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 100; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * window.innerWidth + 'px';
+                particle.style.animationDuration = Math.random() * 5 + 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Inizializza le particelle
+        createParticles();
+
+        // Animazione contatori
+        document.querySelectorAll('.stat-number').forEach(stat => {
+            const countTo = parseInt(stat.getAttribute('data-count'));
+            let count = 0;
+            const increment = Math.ceil(countTo / 100);
+
+            const updateCount = () => {
+                if (count < countTo) {
+                    count += increment;
+                    stat.textContent = count > countTo ? countTo : count;
+                    requestAnimationFrame(updateCount);
+                }
+            };
+
+            updateCount();
+        });
+
+        // Animazione timeline
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            item.classList.add('animate');
+        });
+
+        // Animazione scroll
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                scrollIndicator.style.display = 'none';
+            } else {
+                scrollIndicator.style.display = 'flex';
+            }
+        });
+
+        // Effetto di scorrimento
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Effetto di scorrimento per il logo
+        const footerLogo = document.querySelector('.footer-logo');
+        footerLogo.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+
+</html>
