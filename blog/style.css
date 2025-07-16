@@ -1,0 +1,66 @@
+:root {
+  --primary-bg: rgb(239, 224, 197);
+  --secondary-bg: rgb(241, 236, 226);
+  --button-bg: #3498db;
+  --primary-color: #333333;
+  --accent-color: #09a7e0;
+  --text-color: #555555;
+  --heading-font: "Montserrat", sans-serif;
+  --body-font: "Roboto", sans-serif;
+}
+
+body {
+  font-family: var(--body-font);
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  text-align: center;
+}
+
+h1 {
+  font-family: var(--heading-font);
+  font-size: 3.5rem;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+}
+
+.typing-text {
+  font-family: var(--body-font);
+  font-size: 1.5rem;
+  color: var(--text-color);
+  min-height: 2.5em;
+  margin-bottom: 30px;
+  white-space: pre-wrap;
+  overflow: hidden;
+  animation:
+    typing 3.5s steps(40, end);
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+.back-button {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 12px 25px;
+  background-color: var(--button-bg);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+}
+
+.back-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-3px);
+}
