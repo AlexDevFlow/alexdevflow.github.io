@@ -92,21 +92,25 @@ gsap.from("#projects .project-card", {
 const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
 const mobileMenu = document.getElementById("mobile-menu");
 const mobileMenuClose = document.getElementById("mobile-menu-close");
+const mobileMenuOverlay = document.getElementById("mobile-menu-overlay");
 
 function openMobileMenu() {
   mobileMenu.classList.add("active");
+  mobileMenuOverlay?.classList.add("active");
   document.body.style.overflow = "hidden";
   mobileMenuToggle.setAttribute("aria-expanded", "true");
 }
 
 function closeMobileMenu() {
   mobileMenu.classList.remove("active");
+  mobileMenuOverlay?.classList.remove("active");
   document.body.style.overflow = "";
   mobileMenuToggle.setAttribute("aria-expanded", "false");
 }
 
 mobileMenuToggle.addEventListener("click", openMobileMenu);
 mobileMenuClose.addEventListener("click", closeMobileMenu);
+mobileMenuOverlay?.addEventListener("click", closeMobileMenu);
 
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {

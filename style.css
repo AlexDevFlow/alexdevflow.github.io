@@ -125,6 +125,22 @@ body {
   z-index: 20;
 }
 
+@media (max-width: 480px) {
+  .language-switch {
+    top: 10px;
+    right: 10px;
+  }
+
+  .language-switch button {
+    padding: 6px 11px;
+    font-size: 0.9rem;
+  }
+
+  body {
+    padding-top: 18px;
+  }
+}
+
 .language-switch button {
   background: linear-gradient(135deg, var(--button-bg), var(--accent-color));
   color: white;
