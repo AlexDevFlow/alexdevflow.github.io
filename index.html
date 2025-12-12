@@ -23,18 +23,45 @@
     </header>
     <main class="card-container" id="main-content">
         <a href="./portfolio/" class="card">
-            <dotlottie-player class="lottie-icon" src="./portfolio.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true"></dotlottie-player>
+                        <dotlottie-player class="lottie-icon" src="./portfolio.lottie" background="transparent" speed="1" loop autoplay="false" aria-hidden="true"></dotlottie-player>
             <h2 data-i18n="home.cardPortfolio">Portfolio</h2>
         </a>
         <a href="./blog/" class="card">
-            <dotlottie-player class="lottie-icon" src="./blog.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true"></dotlottie-player>
+                        <dotlottie-player class="lottie-icon" src="./blog.lottie" background="transparent" speed="1" loop autoplay="false" aria-hidden="true"></dotlottie-player>
             <h2 data-i18n="home.cardBlog">Blog</h2>
         </a>
         <a href="./lab/" class="card">
-            <dotlottie-player class="lottie-icon" src="./lab.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true"></dotlottie-player>
+                        <dotlottie-player class="lottie-icon" src="./lab.lottie" background="transparent" speed="1" loop autoplay="false" aria-hidden="true"></dotlottie-player>
             <h2 data-i18n="home.cardLab">Lab</h2>
         </a>
     </main>
-    <script src="script.js"></script>
+        <script src="script.js"></script>
+        <script>
+            (function() {
+                const players = Array.from(document.querySelectorAll('dotlottie-player'));
+                if (!players.length) return;
+
+                const start = (p) => {
+                    if (p.dataset.started) return;
+                    p.dataset.started = '1';
+                    if (typeof p.play === 'function') p.play();
+                };
+
+                const observer = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) start(entry.target);
+                    });
+                }, { rootMargin: '120px 0px' }) : null;
+
+                players.forEach((p) => {
+                    if (observer) observer.observe(p); else start(p);
+                    p.addEventListener('pointerenter', () => start(p));
+                    p.addEventListener('focus', () => start(p));
+                });
+
+                const idle = window.requestIdleCallback || function(cb) { return setTimeout(cb, 300); };
+                idle(() => players.forEach(start));
+            })();
+        </script>
 </body>
 </html>
