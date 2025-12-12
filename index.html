@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" defer></script>
     
 </head>
 <body>
@@ -22,15 +23,15 @@
     </header>
     <main class="card-container" id="main-content">
         <a href="./portfolio/" class="card">
-            <span class="emoji-icon" aria-hidden="true">💼</span>
+            <dotlottie-player class="lottie-icon" src="./portfolio.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true"></dotlottie-player>
             <h2 data-i18n="home.cardPortfolio">Portfolio</h2>
         </a>
         <a href="./blog/" class="card">
-            <span class="emoji-icon" aria-hidden="true">✍️</span>
+            <dotlottie-player class="lottie-icon" src="./blog.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true"></dotlottie-player>
             <h2 data-i18n="home.cardBlog">Blog</h2>
         </a>
         <a href="./lab/" class="card">
-            <span class="emoji-icon" aria-hidden="true">🧪</span>
+            <dotlottie-player class="lottie-icon" src="./lab.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true"></dotlottie-player>
             <h2 data-i18n="home.cardLab">Lab</h2>
         </a>
     </main>

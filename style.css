@@ -82,14 +82,15 @@ body {
   color: var(--primary-color);
 }
 
-.emoji-icon {
-  font-size: 4rem;
+.lottie-icon {
+  width: 120px;
+  height: 120px;
   margin-bottom: 1rem;
   transition: transform 0.3s ease-in-out;
 }
 
-.card:hover .emoji-icon {
-  transform: scale(1.2);
+.card:hover .lottie-icon {
+  transform: scale(1.05);
 }
 
 .skip-link {
