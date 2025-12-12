@@ -19,14 +19,7 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  opacity: 0;
-  animation: fadeIn 1s ease-in-out forwards;
   text-align: center;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .main-header {
