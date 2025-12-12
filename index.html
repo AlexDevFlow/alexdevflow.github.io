@@ -7,11 +7,22 @@
     <title>Alessandro Trysh</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preload" href="style.css" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" defer></script>
-    <script data-goatcounter="https://alexdevflow.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+        <script>
+            // Load analytics off the critical path
+            const loadAnalytics = () => {
+                const s = document.createElement('script');
+                s.src = 'https://gc.zgo.at/count.js';
+                s.async = true;
+                s.setAttribute('data-goatcounter', 'https://alexdevflow.goatcounter.com/count');
+                document.head.appendChild(s);
+            };
+            if ('requestIdleCallback' in window) requestIdleCallback(loadAnalytics); else window.addEventListener('load', loadAnalytics);
+        </script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
