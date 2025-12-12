@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Blog by Alessandro Trysh – updates, thoughts, and inspiration.">
     <title>Blog - Coming Soon</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,9 +11,15 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Blog</h1>
-    <p class="typing-text"></p>
-    <a href="/" class="back-button">Go Back Home</a>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="language-switch">
+        <button id="blogLangToggle" type="button" aria-label="Toggle language" aria-pressed="false">IT</button>
+    </div>
+    <main id="main-content">
+        <h1 data-i18n="blog.title">Blog</h1>
+        <p class="typing-text" data-i18n="blog.message" role="status" aria-live="polite"></p>
+        <a href="/" class="back-button" data-i18n="blog.back">Go Back Home</a>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>

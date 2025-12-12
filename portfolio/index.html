@@ -6,6 +6,8 @@ Don't forget about suggestions, i am not really into frontend development as you
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portfolio of Alessandro Trysh: projects, skills, and contact information for software development consulting." />
+  <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.js"></script>
   <title>Alessandro Trysh - Software Developer</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -16,6 +18,7 @@ Don't forget about suggestions, i am not really into frontend development as you
 </head>
 
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <nav class="fixed w-full z-10 bg-primary-bg bg-opacity-90 backdrop-blur-md shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
@@ -23,35 +26,42 @@ Don't forget about suggestions, i am not really into frontend development as you
           <a href="../../index.html" class="text-black font-bold text-xl">Alessandro Trysh</a>
         </div>
         <div class="hidden md:block desktop-menu">
-          <div class="ml-10 flex items-baseline space-x-4">
-            <a href="#home" class="hover:text-black px-3 py-2 rounded-md text-sm font-medium">Home</a>
-            <a href="#about" class="hover:text-black px-3 py-2 rounded-md text-sm font-medium">About</a>
-            <a href="#skills" class="hover:text-black px-3 py-2 rounded-md text-sm font-medium">Skills</a>
-            <a href="#projects" class="hover:text-black px-3 py-2 rounded-md text-sm font-medium">Projects</a>
-            <a href="#contact" class="px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+          <div class="ml-10 flex items-center space-x-4">
+            <a href="#home" class="hover:text-black px-3 py-2 rounded-md text-sm font-medium" data-i18n="nav.home">Home</a>
+            <a href="#about" class="hover:text-black px-3 py-2 rounded-md text-sm font-medium" data-i18n="nav.about">About</a>
+            <a href="#skills" class="hover:text-black px-3 py-2 rounded-md text-sm font-medium" data-i18n="nav.skills">Skills</a>
+            <a href="#projects" class="hover:text-black px-3 py-2 rounded-md text-sm font-medium" data-i18n="nav.projects">Projects</a>
+            <a href="#contact" class="px-3 py-2 rounded-md text-sm font-medium" data-i18n="nav.contact">Contact</a>
           </div>
         </div>
-        <div class="md:hidden">
-          <button id="mobile-menu-toggle" class="text-black focus:outline-none">
-            <i class="fas fa-bars text-2xl"></i>
-          </button>
+        <div class="flex items-center gap-3">
+          <div class="language-switch nav-switch">
+            <button id="portfolioLangToggle" type="button" aria-label="Toggle language" aria-pressed="false">IT</button>
+          </div>
+          <div class="md:hidden">
+            <button id="mobile-menu-toggle" class="text-black focus:outline-none" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu" type="button">
+              <i class="fas fa-bars text-2xl"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </nav>
 
+  <main id="main-content">
 
-  <div id="mobile-menu" class="mobile-menu bg-white bg-opacity-70 backdrop-blur-md">
+
+  <div id="mobile-menu" class="mobile-menu bg-white bg-opacity-70 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Navigation menu">
     <div class="mobile-menu-header">
-      <h2 class="text-xl font-bold">Menu</h2>
-      <span id="mobile-menu-close" class="mobile-menu-close">&times;</span>
+      <h2 class="text-xl font-bold" data-i18n="nav.menu">Menu</h2>
+      <button id="mobile-menu-close" class="mobile-menu-close" type="button" aria-label="Close menu">&times;</button>
     </div>
     <div class="mobile-menu-items">
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#skills">Skills</a>
-      <a href="#projects">Projects</a>
-      <a href="#contact">Contact</a>
+      <a href="#home" data-i18n="nav.home">Home</a>
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#skills" data-i18n="nav.skills">Skills</a>
+      <a href="#projects" data-i18n="nav.projects">Projects</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
     </div>
   </div>
 
@@ -60,10 +70,10 @@ Don't forget about suggestions, i am not really into frontend development as you
       <div class="flex flex-col md:flex-row items-center justify-between">
         <div class="md:w-1/2 mb-8 md:mb-0">
           <h1 class="hero-text font-bold mb-4"><br>Alex</h1>
-          <p class="text-2xl mb-8">
+          <p class="text-2xl mb-8" data-i18n="hero.tagline">
             Software Developer & Technology Enthusiast
           </p>
-          <a href="#contact" class="scroll-button smooth-scroll">
+          <a href="#contact" class="scroll-button smooth-scroll" data-i18n="hero.cta">
             Contact Me
           </a>
         </div>
@@ -77,23 +87,24 @@ Don't forget about suggestions, i am not really into frontend development as you
 
   <section id="about" class="py-20 bg-primary-bg">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="section-title text-center">About Me</h2>
+      <h2 class="section-title text-center" data-i18n="about.title">About Me</h2>
       <div class="flex flex-col md:flex-row items-center justify-between">
         <div class="md:w-1/2 mb-8 md:mb-0">
           <img src="/portfolio/images/headerpfp.svg" alt="image" class="mx-auto w-62 md:w-82 lg:w-80" />
         </div>
         <div class="md:w-1/2">
-          <p class="text-lg mb-4">
+          <p class="text-lg mb-4" data-i18n="about.p1">
             I am a computer science student with a strong passion for automation, artificial intelligence, and
             cybersecurity. My goal is to apply my skills in innovative and challenging environments, contributing to
             projects that have a significant impact.
           </p>
-          <p class="text-lg mb-4">
-            During my internship as a Software Developer at Regesta S.p.A., I had the opportunity to work with
-            enterprise technologies, developing web interfaces with SAPUI5 and performing tests with OPA5 and WDI5. This
-            experience consolidated my development skills and allowed me to understand the importance of creating robust
-            and well-tested solutions.
+          <p class="text-lg mb-4" data-i18n="about.p2">
+            Today I collaborate with small and medium businesses, helping them build websites, visuals, and consulting
+            to understand their real needs.
           </p>
+          <a href="#contact" class="scroll-button smooth-scroll" data-i18n="about.cta">
+            Do you think this fits you? Let's talk!
+          </a>
         </div>
       </div>
     </div>
@@ -101,57 +112,57 @@ Don't forget about suggestions, i am not really into frontend development as you
 
   <section id="skills" class="py-20 bg-secondary-bg">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="section-title text-center mb-12">My Skills</h2>
+      <h2 class="section-title text-center mb-12" data-i18n="skills.title">My Skills</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div class="project-card p-6 skill-card">
-          <h3 class="text-2xl font-semibold mb-6">Languages</h3>
+          <h3 class="text-2xl font-semibold mb-6" data-i18n="skills.languages.title">Languages</h3>
           <ul class="space-y-4">
             <li class="flex items-center">
-              <i class="fab fa-python text-xl mr-4 text-blue-500"></i>
-              <span><strong>Python</strong> (Flask, BS4, Telegram API)</span>
+              <i class="fab fa-python text-xl mr-4 text-blue-500" aria-hidden="true"></i>
+              <span data-i18n="skills.languages.python"><strong>Python</strong> (Flask, BS4, Telegram API)</span>
             </li>
             <li class="flex items-center">
-              <i class="fab fa-js text-xl mr-4 text-yellow-500"></i>
-              <span><strong>JavaScript</strong></span>
+              <i class="fab fa-js text-xl mr-4 text-yellow-500" aria-hidden="true"></i>
+              <span data-i18n="skills.languages.javascript"><strong>JavaScript</strong></span>
             </li>
             <li class="flex items-center">
-              <i class="fab fa-java text-xl mr-4 text-orange-500"></i>
-              <span><strong>Java</strong></span>
+              <i class="fab fa-java text-xl mr-4 text-orange-500" aria-hidden="true"></i>
+              <span data-i18n="skills.languages.java"><strong>Java</strong></span>
             </li>
             <li class="flex items-center">
-              <i class="fab fa-rust text-xl mr-4 text-red-500"></i>
-              <span><strong>Rust</strong> (with Tauri for GUI)</span>
+              <i class="fab fa-rust text-xl mr-4 text-red-500" aria-hidden="true"></i>
+              <span data-i18n="skills.languages.rust"><strong>Rust</strong> (with Tauri for GUI)</span>
             </li>
           </ul>
         </div>
         <div class="project-card p-6 skill-card">
-          <h3 class="text-2xl font-semibold mb-6">Operating Systems</h3>
+          <h3 class="text-2xl font-semibold mb-6" data-i18n="skills.os.title">Operating Systems</h3>
           <ul class="space-y-4">
             <li class="flex items-center">
-              <i class="fab fa-linux text-xl mr-4 text-black-500"></i>
-              <span><strong>Linux</strong> (Fedora, Pop!_OS)</span>
+              <i class="fab fa-linux text-xl mr-4 text-black-500" aria-hidden="true"></i>
+              <span data-i18n="skills.os.linux"><strong>Linux</strong> (Fedora, Pop!_OS)</span>
             </li>
             <li class="flex items-center">
-              <i class="fab fa-windows text-xl mr-4 text-blue-500"></i>
-              <span><strong>Windows</strong> (Windows Server 2019)</span>
+              <i class="fab fa-windows text-xl mr-4 text-blue-500" aria-hidden="true"></i>
+              <span data-i18n="skills.os.windows"><strong>Windows</strong> (Windows Server 2019)</span>
             </li>
           </ul>
         </div>
         <div class="project-card p-6 skill-card">
-          <h3 class="text-2xl font-semibold mb-6">Other</h3>
+          <h3 class="text-2xl font-semibold mb-6" data-i18n="skills.other.title">Other</h3>
           <ul class="space-y-4">
             <li class="flex items-center">
-              <i class="fas fa-database text-xl mr-4 text-purple-500"></i>
-              <span><strong>SQL</strong> (MySQL & SQLite)</span>
+              <i class="fas fa-database text-xl mr-4 text-purple-500" aria-hidden="true"></i>
+              <span data-i18n="skills.other.sql"><strong>SQL</strong> (MySQL & SQLite)</span>
             </li>
             <li class="flex items-center">
-              <i class="fas fa-cloud text-xl mr-4 text-gray-500"></i>
-              <span><strong>Vercel, Railway</strong></span>
+              <i class="fas fa-cloud text-xl mr-4 text-gray-500" aria-hidden="true"></i>
+              <span data-i18n="skills.other.cloud"><strong>Vercel, Railway</strong></span>
             </li>
 
             <li class="flex items-center">
-              <i class="fas fa-terminal text-xl mr-4 text-black-500"></i>
-              <span><strong>Bash</strong></span>
+              <i class="fas fa-terminal text-xl mr-4 text-black-500" aria-hidden="true"></i>
+              <span data-i18n="skills.other.bash"><strong>Bash</strong></span>
             </li>
           </ul>
         </div>
@@ -160,52 +171,100 @@ Don't forget about suggestions, i am not really into frontend development as you
   </section>
   <section id="projects" class="py-20 bg-primary-bg">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="section-title text-center">Projects</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Project 1 -->
-        <div class="project-card p-6">
-          <i class="fab fa-telegram text-4xl mb-4 text-blue-500"></i>
-          <h3 class="text-xl font-semibold mb-2">
-            Telegram bot and website for school circulars
-          </h3>
-          <p class="mb-4">
-            Developed a Python bot with BS4 and Telegram API to extract circulars from the school website and send them
-            to students. Also developed a website with Flask to show circulars and substitutions, with browser
-            notifications.
-          </p>
-          <a href="https://t.me/ITISCastelli_bot" class="inline-block mt-4 button">
-            <i class="fab fa-telegram mr-2"></i>See the bot
-          </a>
-          <a href="https://sc.dewlads.com/dashboard" class="inline-block mt-4 button">
-            <i class="fas fa-link mr-2"></i>Visit the website
-          </a>
+      <h2 class="section-title text-center" data-i18n="projects.title">Projects</h2>
+      <div class="bento-grid">
+        <div class="bento-card span-2">
+          <div class="bento-top">
+            <dotlottie-player src="/portfolio/telegram_logo.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <div>
+              <h3 class="bento-title" data-i18n="projects.p1.title">Telegram bot and website for school circulars</h3>
+              <p class="bento-desc" data-i18n="projects.p1.desc">Developed a Python bot with BS4 and Telegram API to extract circulars from the school website and send them to students. Also developed a website with Flask to show circulars and substitutions, with browser notifications.</p>
+            </div>
+          </div>
+          <div class="bento-tags">
+            <span class="bento-tag">Python</span>
+            <span class="bento-tag">Flask</span>
+            <span class="bento-tag">BS4</span>
+            <span class="bento-tag">Telegram API</span>
+          </div>
+          <div class="bento-actions">
+            <a href="https://t.me/ITISCastelli_bot" class="button" data-i18n="projects.p1.ctaBot"><i class="fab fa-telegram mr-2"></i>See the bot</a>
+            <a href="https://sc.dewlads.com/dashboard" class="button button-ghost" data-i18n="projects.p1.ctaSite"><i class="fas fa-link mr-2"></i>Visit the website</a>
+          </div>
         </div>
 
-        <!-- Project 2 -->
-        <div class="project-card p-6">
-          <i class="fas fa-trophy text-4xl mb-4 text-yellow-500"></i>
-          <h3 class="text-xl font-semibold mb-2">MVP of a contest app</h3>
-          <p class="mb-4">
-            Created a prototype in Flask inspired by <a href="https://contest.com" target="_blank"
-              class="text-blue-500">contest.com</a>, which allows users to create and manage online competitions. The
-            concept has been validated, with interest for further developments.
-          </p>
-          <a href="#" class="closed-source inline-block mt-4 button">
-            <i class="fas fa-warning mr-2"></i>Closed source
-          </a>
+        <div class="bento-card">
+          <div class="bento-top">
+            <dotlottie-player src="/portfolio/contest_platform.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <div>
+              <h3 class="bento-title" data-i18n="projects.p2.title">MVP of a contest app</h3>
+              <p class="bento-desc" data-i18n="projects.p2.desc">Created a prototype in Flask inspired by contest.com to create and manage competitions, validated with early interest.</p>
+            </div>
+          </div>
+          <div class="bento-tags">
+            <span class="bento-tag">Flask</span>
+            <span class="bento-tag">Python</span>
+            <span class="bento-tag">SQLite</span>
+          </div>
+          <div class="bento-actions">
+            <span class="button closed-source" data-i18n="projects.p2.cta"><i class="fas fa-lock mr-2"></i>Closed source</span>
+          </div>
         </div>
 
-        <!-- Project 3 -->
-        <div class="project-card p-6">
-          <i class="fas fa-file-video text-4xl mb-4 text-green-500"></i>
-          <h3 class="text-xl font-semibold mb-2">Nautilus extension for file conversion</h3>
-          <p class="mb-4">
-            Wrote a Bash script with FFMPEG to add a file conversion option to the Nautilus file manager. The goal is to
-            introduce a temporary solution for a tool that is not compatible with Linux.
-          </p>
-          <a href="https://github.com/AlexDevFlow/Media-Converter" class="inline-block mt-4 button">
-            <i class="fas fa-link mr-2"></i>Visit Project
-          </a>
+        <div class="bento-card">
+          <div class="bento-top">
+            <dotlottie-player src="/portfolio/file_conversion.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <div>
+              <h3 class="bento-title" data-i18n="projects.p3.title">Nautilus extension for file conversion</h3>
+              <p class="bento-desc" data-i18n="projects.p3.desc">Bash + FFMPEG script that adds a conversion action to Nautilus for quick media transforms on Linux.</p>
+            </div>
+          </div>
+          <div class="bento-tags">
+            <span class="bento-tag">Bash</span>
+            <span class="bento-tag">FFMPEG</span>
+            <span class="bento-tag">Linux</span>
+          </div>
+          <div class="bento-actions">
+            <a href="https://github.com/AlexDevFlow/Media-Converter" class="button button-ghost" data-i18n="projects.p3.cta"><i class="fas fa-link mr-2"></i>Visit Project</a>
+          </div>
+        </div>
+
+        <div class="bento-card span-2">
+          <div class="bento-top">
+            <dotlottie-player src="/portfolio/quiz_platform.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <div>
+              <h3 class="bento-title" data-i18n="projects.p4.title">Quiz Platform (LLM-powered)</h3>
+              <p class="bento-desc" data-i18n="projects.p4.desc">FastAPI webapp that generates and grades quizzes with LLMs, supports custom reference files, style mimic, and configurable question types and counts.</p>
+            </div>
+          </div>
+          <div class="bento-tags">
+            <span class="bento-tag">FastAPI</span>
+            <span class="bento-tag">LLM</span>
+            <span class="bento-tag">PostgreSQL</span>
+            <span class="bento-tag">Grading</span>
+          </div>
+          <div class="bento-actions">
+            <span class="button closed-source" data-i18n="projects.p4.ctaClosed"><i class="fas fa-lock mr-2"></i>Closed source</span>
+          </div>
+        </div>
+
+        <div class="bento-card span-wide">
+          <div class="bento-top">
+            <dotlottie-player src="/portfolio/zerosec.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <div>
+              <h3 class="bento-title" data-i18n="projects.p5.title">ZeroSec Spectre</h3>
+              <p class="bento-desc" data-i18n="projects.p5.desc">LLM-powered cybersecurity framework for rapid, context-aware offense/defense: file-map context, intel pipeline, and task engine with safeguards, RBAC, and human-in-the-loop controls.</p>
+            </div>
+          </div>
+          <div class="bento-tags">
+            <span class="bento-tag">Cybersecurity</span>
+            <span class="bento-tag">LLM</span>
+            <span class="bento-tag">Automation</span>
+            <span class="bento-tag">RBAC</span>
+          </div>
+          <div class="bento-actions">
+            <a href="#contact" class="button button-ghost" data-i18n="projects.p5.ctaDiscuss"><i class="fas fa-comments mr-2"></i>Let's discuss</a>
+          </div>
         </div>
       </div>
     </div>
@@ -213,27 +272,29 @@ Don't forget about suggestions, i am not really into frontend development as you
 
   <section id="contact" class="py-20 bg-primary-bg">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="section-title mb-8">Contact me</h2>
-      <p class="text-lg mb-8">
+      <h2 class="section-title mb-8" data-i18n="contact.title">Contact me</h2>
+      <p class="text-lg mb-8" data-i18n="contact.subtitle">
         You can contact me through:
       </p>
       <div class="flex justify-center space-x-8">
         <a href="mailto:alextrysh@protonmail.com"
           class="contact-icon email text-gray-400 hover:text-[#D44638] transition duration-300">
-          <i class="fas fa-envelope"></i>
+          <i class="fas fa-envelope" aria-hidden="true"></i>
         </a>
         <a href="https://github.com/AlexDevFlow"
           class="contact-icon github text-gray-400 hover:text-[#333] transition duration-300">
-          <i class="fab fa-github"></i>
+          <i class="fab fa-github" aria-hidden="true"></i>
         </a>
       </div>
     </div>
   </section>
 
+  </main>
+
   <footer class="py-6 bg-secondary-bg">
     <div class="container mx-auto text-center">
-      <p class="text-sm">&copy; 2024 Alessandro Trysh. All rights reserved.</p>
-      <p class="text-sm">Thanks to <a href="https://notioly.com/">notioly</a> for the icons!</p>
+      <p class="text-sm" data-i18n="footer.copy">&copy; 2024 Alessandro Trysh. All rights reserved.</p>
+      <p class="text-sm" data-i18n="footer.credit">Thanks to <a href="https://notioly.com/">notioly</a> for the icons!</p>
     </div>
   </footer>
   <script src="/portfolio/script/script.js"></script>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio, blog, and lab by Alessandro Trysh – computer science student and developer.">
     <title>Alessandro Trysh</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,22 +12,26 @@
     
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="language-switch">
+        <button id="langToggle" type="button" aria-label="Toggle language" aria-pressed="false">IT</button>
+    </div>
     <header class="main-header">
         <h1>Alessandro Trysh</h1>
-        <p>Computer Science Student & Developer</p>
+        <p data-i18n="home.subtitle">Computer Science Student & Developer</p>
     </header>
-    <main class="card-container">
+    <main class="card-container" id="main-content">
         <a href="/portfolio/" class="card">
-            <span class="emoji-icon">💼</span>
-            <h2>Portfolio</h2>
+            <span class="emoji-icon" aria-hidden="true">💼</span>
+            <h2 data-i18n="home.cardPortfolio">Portfolio</h2>
         </a>
         <a href="/blog/" class="card">
-            <span class="emoji-icon">✍️</span>
-            <h2>Blog</h2>
+            <span class="emoji-icon" aria-hidden="true">✍️</span>
+            <h2 data-i18n="home.cardBlog">Blog</h2>
         </a>
         <a href="/lab/" class="card">
-            <span class="emoji-icon">🧪</span>
-            <h2>Lab</h2>
+            <span class="emoji-icon" aria-hidden="true">🧪</span>
+            <h2 data-i18n="home.cardLab">Lab</h2>
         </a>
     </main>
     <script src="script.js"></script>

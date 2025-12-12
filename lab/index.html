@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive lab experiments by Alessandro Trysh.">
     <title>Lab - Experiments</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,15 +67,91 @@
             background-color: #2980b9;
             transform: translateY(-3px);
         }
+
+        .language-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 20;
+        }
+
+        .language-switch button {
+            background: linear-gradient(135deg, var(--button-bg), var(--accent-color));
+            color: white;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        .language-switch button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-switch button:active {
+            transform: translateY(0);
+            opacity: 0.9;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: -999px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(1px, 1px, 1px, 1px);
+            white-space: nowrap;
+        }
+
+        .skip-link:focus {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            width: auto;
+            height: auto;
+            clip: auto;
+            padding: 10px 16px;
+            background: var(--button-bg);
+            color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <a href="/" class="back-button">Go Back Home</a>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="language-switch">
+        <button id="labLangToggle" type="button" aria-label="Toggle language" aria-pressed="false">IT</button>
+    </div>
+    <main id="main-content">
+        <canvas id="canvas"></canvas>
+        <a href="/" class="back-button" data-i18n="lab.back">Go Back Home</a>
+    </main>
     
     <script>
+    const translations = {
+        en: {
+            greetings: ["Welcome to the Lab!", "Experiments are brewing..."],
+            "lab.back": "Go Back Home"
+        },
+        it: {
+            greetings: ["Benvenuto nel Lab!", "Gli esperimenti stanno prendendo forma..."],
+            "lab.back": "Torna alla Home"
+        }
+    };
+
+    const storageKey = 'alexdevflow-lang';
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+    const backButton = document.querySelector('.back-button');
+    const langToggle = document.getElementById('labLangToggle');
     
     // Simple mobile detection
     const isMobile = (window.innerWidth || 800) <= 768;
@@ -90,7 +167,7 @@
     
     resizeCanvas();
     
-    const greetings = ["Welcome to the Lab!", "Experiments are brewing..."];
+    let greetings = translations.en.greetings;
     let currentGreetingIndex = 0;
     
     // Responsive font size
@@ -152,12 +229,10 @@
     function init() {
         particles.length = 0;
         
-        // Ensure canvas has proper dimensions
         if (canvas.width === 0 || canvas.height === 0) {
             resizeCanvas();
         }
         
-        // Update font size on resize
         fontSize = getFontSize();
         ctx.font = `bold ${fontSize}px Arial`;
         ctx.textAlign = 'center';
@@ -202,7 +277,7 @@
 
     // Mouse events
     window.addEventListener('mousemove', function(event) {
-        if (!isMobile) { // Only handle mouse events on non-mobile devices
+        if (!isMobile) {
             mouse.x = event.x;
             mouse.y = event.y;
         }
@@ -216,10 +291,8 @@
             mouse.y = event.touches[0].clientY;
             touchStartTime = Date.now();
             
-            // Set a timeout to detect tap
             touchTimeout = setTimeout(() => {
-                // If touch is held longer than TAP_DURATION, treat as long press
-                touchStartTime = null; // Prevent tap handling
+                touchStartTime = null;
             }, TAP_DURATION);
         }
     });
@@ -239,35 +312,51 @@
             touchTimeout = null;
         }
 
-        // If touch duration was short (tap)
         if (touchStartTime && (Date.now() - touchStartTime < TAP_DURATION)) {
-            // Keep animation for a short duration
             setTimeout(() => {
                 mouse.x = null;
                 mouse.y = null;
             }, ANIMATION_DURATION);
         } else {
-            // For long press, reset immediately on touch end
             mouse.x = null;
             mouse.y = null;
         }
         touchStartTime = null;
     });
 
-    // Initialize after DOM is ready
-    setTimeout(() => {
-        resizeCanvas();
+    function applyLanguage(lang) {
+        if (!translations[lang]) return;
+        document.documentElement.lang = lang;
+        greetings = translations[lang].greetings;
+        currentGreetingIndex = 0;
+        backButton.textContent = translations[lang]['lab.back'];
+        langToggle.textContent = lang === 'it' ? '🇮🇹 Italiano' : '🇬🇧 English';
+        langToggle.setAttribute('aria-pressed', lang === 'it' ? 'true' : 'false');
         init();
-        animate();
-    }, 100);
+    }
 
-    // Resize handler
+    function initLanguage() {
+        const saved = localStorage.getItem(storageKey);
+        const browserLang = (navigator.language || 'en').slice(0, 2);
+        const startingLang = saved || (browserLang === 'it' ? 'it' : 'en');
+        applyLanguage(startingLang);
+    }
+
+    initLanguage();
+    animate();
+
+    langToggle.addEventListener('click', () => {
+        const current = document.documentElement.lang === 'it' ? 'it' : 'en';
+        const next = current === 'en' ? 'it' : 'en';
+        localStorage.setItem(storageKey, next);
+        applyLanguage(next);
+    });
+
     window.addEventListener('resize', function() {
         resizeCanvas();
         init();
     });
 
-    // Text rotation
     setInterval(() => {
         currentGreetingIndex = (currentGreetingIndex + 1) % greetings.length;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -287,6 +376,6 @@
             particles[i].baseY = y;
         }
     }, 5000);
-</script>
+    </script>
 </body>
 </html>
