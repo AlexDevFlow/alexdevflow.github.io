@@ -7,14 +7,29 @@ Don't forget about suggestions, i am not really into frontend development as you
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Portfolio of Alessandro Trysh: projects, skills, and contact information for software development consulting." />
-  <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.js"></script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preload" href="./style/style.css" as="style">
+  <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.js" defer></script>
   <title>Alessandro Trysh - Software Developer</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
-  <script data-goatcounter="https://alexdevflow.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="./style/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js" defer></script>
+  <script>
+    // Defer analytics off the critical path
+    const loadAnalytics = () => {
+      const s = document.createElement('script');
+      s.src = 'https://gc.zgo.at/count.js';
+      s.async = true;
+      s.setAttribute('data-goatcounter', 'https://alexdevflow.goatcounter.com/count');
+      document.head.appendChild(s);
+    };
+    if ('requestIdleCallback' in window) requestIdleCallback(loadAnalytics); else window.addEventListener('load', loadAnalytics);
+  </script>
   <link rel="stylesheet" href="./style/style.css">
 </head>
 
@@ -82,7 +97,7 @@ Don't forget about suggestions, i am not really into frontend development as you
         </div>
         <div class="md:w-1/2 flex justify-center">
           <img src="./images/headersecond.svg" alt="Developer illustration"
-            class="w-full sm:max-w-xs md:max-w-sm lg:max-w-md" />
+            class="w-full sm:max-w-xs md:max-w-sm lg:max-w-md" fetchpriority="high" decoding="async" />
         </div>
       </div>
     </div>
@@ -178,7 +193,7 @@ Don't forget about suggestions, i am not really into frontend development as you
       <div class="bento-grid">
         <div class="bento-card span-2">
           <div class="bento-top">
-            <dotlottie-player src="./telegram_logo.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <dotlottie-player src="./telegram_logo.lottie" background="transparent" speed="1" loop autoplay="false" preload="none" aria-hidden="true" class="bento-lottie"></dotlottie-player>
             <div>
               <h3 class="bento-title" data-i18n="projects.p1.title">Telegram bot and website for school circulars</h3>
               <p class="bento-desc" data-i18n="projects.p1.desc">Developed a Python bot with BS4 and Telegram API to extract circulars from the school website and send them to students. Also developed a website with Flask to show circulars and substitutions, with browser notifications.</p>
@@ -198,7 +213,7 @@ Don't forget about suggestions, i am not really into frontend development as you
 
         <div class="bento-card">
           <div class="bento-top">
-            <dotlottie-player src="./contest_platform.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <dotlottie-player src="./contest_platform.lottie" background="transparent" speed="1" loop autoplay="false" preload="none" aria-hidden="true" class="bento-lottie"></dotlottie-player>
             <div>
               <h3 class="bento-title" data-i18n="projects.p2.title">MVP of a contest app</h3>
               <p class="bento-desc" data-i18n="projects.p2.desc">Created a prototype in Flask inspired by contest.com to create and manage competitions, validated with early interest.</p>
@@ -216,7 +231,7 @@ Don't forget about suggestions, i am not really into frontend development as you
 
         <div class="bento-card">
           <div class="bento-top">
-            <dotlottie-player src="./file_conversion.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <dotlottie-player src="./file_conversion.lottie" background="transparent" speed="1" loop autoplay="false" preload="none" aria-hidden="true" class="bento-lottie"></dotlottie-player>
             <div>
               <h3 class="bento-title" data-i18n="projects.p3.title">Nautilus extension for file conversion</h3>
               <p class="bento-desc" data-i18n="projects.p3.desc">Bash + FFMPEG script that adds a conversion action to Nautilus for quick media transforms on Linux.</p>
@@ -234,7 +249,7 @@ Don't forget about suggestions, i am not really into frontend development as you
 
         <div class="bento-card span-2">
           <div class="bento-top">
-            <dotlottie-player src="./quiz_platform.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <dotlottie-player src="./quiz_platform.lottie" background="transparent" speed="1" loop autoplay="false" preload="none" aria-hidden="true" class="bento-lottie"></dotlottie-player>
             <div>
               <h3 class="bento-title" data-i18n="projects.p4.title">Quiz Platform (LLM-powered)</h3>
               <p class="bento-desc" data-i18n="projects.p4.desc">FastAPI webapp that generates and grades quizzes with LLMs, supports custom reference files, style mimic, and configurable question types and counts.</p>
@@ -253,7 +268,7 @@ Don't forget about suggestions, i am not really into frontend development as you
 
         <div class="bento-card span-wide">
           <div class="bento-top">
-            <dotlottie-player src="./zerosec.lottie" background="transparent" speed="1" loop autoplay aria-hidden="true" class="bento-lottie"></dotlottie-player>
+            <dotlottie-player src="./zerosec.lottie" background="transparent" speed="1" loop autoplay="false" preload="none" aria-hidden="true" class="bento-lottie"></dotlottie-player>
             <div>
               <h3 class="bento-title" data-i18n="projects.p5.title">ZeroSec Spectre</h3>
               <p class="bento-desc" data-i18n="projects.p5.desc">LLM-powered cybersecurity framework for rapid, context-aware offense/defense: file-map context, intel pipeline, and task engine with safeguards, RBAC, and human-in-the-loop controls.</p>
@@ -300,7 +315,35 @@ Don't forget about suggestions, i am not really into frontend development as you
       <p class="text-sm" data-i18n="footer.credit">Thanks to <a href="https://notioly.com/">notioly</a> for the icons!</p>
     </div>
   </footer>
-  <script src="./script/script.js"></script>
+  <script src="./script/script.js" defer></script>
+  <script>
+    // Lazy-start Lottie players to reduce main-thread work before paint
+    (function() {
+      const players = Array.from(document.querySelectorAll('dotlottie-player'));
+      if (!players.length) return;
+
+      const start = (p) => {
+        if (p.dataset.started) return;
+        p.dataset.started = '1';
+        if (typeof p.play === 'function') p.play();
+      };
+
+      const observer = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) start(entry.target);
+        });
+      }, { rootMargin: '180px 0px' }) : null;
+
+      players.forEach((p) => {
+        if (observer) observer.observe(p); else start(p);
+        p.addEventListener('pointerenter', () => start(p));
+        p.addEventListener('focus', () => start(p));
+      });
+
+      const idle = window.requestIdleCallback || function(cb) { return setTimeout(cb, 400); };
+      idle(() => players.forEach(start));
+    })();
+  </script>
 </body>
 
 </html>
