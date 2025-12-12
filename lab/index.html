@@ -23,25 +23,38 @@
         body {
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            display: block;
+            min-height: 100vh;
             background-color: var(--primary-bg);
             overflow: hidden;
             font-family: var(--body-font);
         }
 
+        main {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            min-height: 100vh;
+            width: 100%;
+            padding: 2.5rem 1.5rem 3rem;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
         canvas {
             position: absolute;
-            margin: 0 auto;
+            top: 0;
+            left: 0;
+            margin: 0;
             z-index: -1;
         }
 
         .back-button {
             display: inline-block;
-            margin-top: 200px;
+            margin-top: 2.5rem;
             padding: 12px 25px;
             background-color: var(--button-bg);
             color: white;
@@ -132,7 +145,7 @@
     </div>
     <main id="main-content">
         <canvas id="canvas"></canvas>
-        <a href="/" class="back-button" data-i18n="lab.back">Go Back Home</a>
+        <a href="../" class="back-button" data-i18n="lab.back">Go Back Home</a>
     </main>
     
     <script>
@@ -226,6 +239,16 @@
         }
     }
 
+    function getTextY() {
+        return canvas.height * 0.4; // push greeting up to leave room for the button
+    }
+
+    function drawGreeting(text) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#d2b48c';
+        ctx.fillText(text, canvas.width / 2, getTextY());
+    }
+
     function init() {
         particles.length = 0;
         
@@ -238,10 +261,7 @@
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#d2b48c';
-        ctx.fillText(greetings[currentGreetingIndex], canvas.width / 2, canvas.height / 2);
-        
+        drawGreeting(greetings[currentGreetingIndex]);
         const textCoordinates = ctx.getImageData(0, 0, canvas.width, canvas.height);
         
         for (let i = 0; i < particleCount; i++) {
@@ -359,10 +379,7 @@
 
     setInterval(() => {
         currentGreetingIndex = (currentGreetingIndex + 1) % greetings.length;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#d2b48c';
-        ctx.fillText(greetings[currentGreetingIndex], canvas.width / 2, canvas.height / 2);
-        
+        drawGreeting(greetings[currentGreetingIndex]);
         const textCoordinates = ctx.getImageData(0, 0, canvas.width, canvas.height);
         
         for (let i = 0; i < particles.length; i++) {

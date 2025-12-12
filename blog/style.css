@@ -13,13 +13,20 @@ body {
   font-family: var(--body-font);
   background-color: var(--primary-bg);
   color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
   margin: 0;
   text-align: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 3rem;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -35,8 +42,12 @@ h1 {
   color: var(--text-color);
   min-height: 2.5em;
   margin-bottom: 30px;
-  white-space: pre-wrap;
+  white-space: normal;
   overflow: hidden;
+  display: inline-block;
+  max-width: 40ch;
+  margin-left: auto;
+  margin-right: auto;
   animation:
     typing 3.5s steps(40, end);
 }
