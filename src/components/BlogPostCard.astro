@@ -1,0 +1,107 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Lang } from '@/i18n';
+import { useTranslations } from '@/i18n';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  lang: Lang;
+}
+
+const { post, lang } = Astro.props;
+const t = useTranslations(lang);
+const { title, description, publishDate, tags } = post.data;
+
+// Get the slug without the language prefix
+const slug = post.slug.replace(`${lang}/`, '');
+
+const formattedDate = new Intl.DateTimeFormat(lang === 'it' ? 'it-IT' : 'en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(publishDate);
+---
+
+<article class="blog-card">
+  <a href={`/${lang}/blog/${slug}`} class="block">
+    <h3 class="blog-card-title">{title}</h3>
+    <p class="blog-card-date">{formattedDate}</p>
+    <p class="blog-card-desc">{description}</p>
+    {tags.length > 0 && (
+      <div class="blog-card-tags">
+        {tags.map((tag) => (
+          <span class="blog-tag">{tag}</span>
+        ))}
+      </div>
+    )}
+    <span class="read-more">{t('blog.readMore')} &rarr;</span>
+  </a>
+</article>
+
+<style>
+  .blog-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .blog-card a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .blog-card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+  }
+
+  .blog-card-date {
+    font-size: 0.875rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+
+  .blog-card-desc {
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .blog-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .blog-tag {
+    padding: 4px 10px;
+    background: rgba(9, 167, 224, 0.1);
+    color: var(--accent-color);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .read-more {
+    display: inline-block;
+    color: var(--button-bg);
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .blog-card:hover .read-more {
+    color: var(--button-hover);
+  }
+</style>

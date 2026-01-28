@@ -1,0 +1,81 @@
+---
+import LottiePlayer from './LottiePlayer.astro';
+import type { CollectionEntry } from 'astro:content';
+import type { Lang } from '@/i18n';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  lang: Lang;
+}
+
+const { project, lang } = Astro.props;
+const { title, description, tags, lottieIcon, span, links, isClosedSource } = project.data;
+
+const spanClass = span === '2' ? 'span-2' : span === 'wide' ? 'span-wide' : '';
+---
+
+<div class:list={['bento-card', spanClass]}>
+  <div class="bento-top">
+    {lottieIcon && (
+      <LottiePlayer src={lottieIcon} class="bento-lottie" />
+    )}
+    <div>
+      <h3 class="bento-title">{title}</h3>
+      <p class="bento-desc">{description}</p>
+    </div>
+  </div>
+
+  <div class="bento-tags">
+    {tags.map((tag) => (
+      <span class="bento-tag">{tag}</span>
+    ))}
+  </div>
+
+  <div class="bento-actions">
+    {isClosedSource ? (
+      <span class="btn btn-disabled">
+        <i class="fas fa-lock mr-2"></i>
+        {lang === 'it' ? 'Codice non pubblico' : 'Closed source'}
+      </span>
+    ) : (
+      <>
+        {links?.telegram && (
+          <a href={links.telegram} target="_blank" rel="noopener noreferrer" class="btn">
+            <i class="fab fa-telegram mr-2"></i>
+            {lang === 'it' ? 'Vedi il bot' : 'See the bot'}
+          </a>
+        )}
+        {links?.github && (
+          <a href={links.github} target="_blank" rel="noopener noreferrer" class="btn">
+            <i class="fab fa-github mr-2"></i>
+            GitHub
+          </a>
+        )}
+        {links?.demo && (
+          <a href={links.demo} target="_blank" rel="noopener noreferrer" class="btn">
+            <i class="fas fa-external-link-alt mr-2"></i>
+            Demo
+          </a>
+        )}
+        {links?.custom && (
+          <a href={links.custom.url} target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+            {links.custom.icon && <i class={`${links.custom.icon} mr-2`}></i>}
+            {links.custom.label}
+          </a>
+        )}
+      </>
+    )}
+  </div>
+</div>
+
+<style>
+  .btn-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .mr-2 {
+    margin-right: 0.5rem;
+  }
+</style>

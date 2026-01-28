@@ -1,0 +1,17 @@
+---
+import { useTranslations, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<footer class="py-8 bg-secondary-bg text-center">
+  <div class="max-w-7xl mx-auto px-4">
+    <p class="text-text mb-2">{t('footer.copy')}</p>
+    <p class="text-sm text-text/70" set:html={t('footer.credit')} />
+  </div>
+</footer>

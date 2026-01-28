@@ -1,0 +1,216 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { useTranslations, type Lang } from '@/i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  publishDate: Date;
+  updatedDate?: Date;
+  author: string;
+  tags: string[];
+  lang: Lang;
+}
+
+const { title, description, publishDate, updatedDate, author, tags, lang } = Astro.props;
+const t = useTranslations(lang);
+
+const formattedPublishDate = new Intl.DateTimeFormat(lang === 'it' ? 'it-IT' : 'en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(publishDate);
+
+const formattedUpdateDate = updatedDate
+  ? new Intl.DateTimeFormat(lang === 'it' ? 'it-IT' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(updatedDate)
+  : null;
+---
+
+<BaseLayout title={`${title} | ${t('blog.title')}`} description={description} lang={lang}>
+  <article class="blog-post" data-pagefind-body data-pagefind-meta={`category:blog`}>
+    <header class="post-header">
+      <div class="max-w-3xl mx-auto px-4">
+        <a href={`/${lang}/blog`} class="back-link">
+          &larr; {t('blog.title')}
+        </a>
+        <h1 class="post-title" data-pagefind-meta="title">{title}</h1>
+        <div class="post-meta">
+          <span class="post-date">{formattedPublishDate}</span>
+          {formattedUpdateDate && (
+            <span class="post-updated">
+              ({lang === 'it' ? 'Aggiornato' : 'Updated'}: {formattedUpdateDate})
+            </span>
+          )}
+          <span class="post-author">• {author}</span>
+        </div>
+        {tags.length > 0 && (
+          <div class="post-tags">
+            {tags.map((tag) => (
+              <span class="post-tag">{tag}</span>
+            ))}
+          </div>
+        )}
+      </div>
+    </header>
+
+    <div class="post-content">
+      <div class="max-w-3xl mx-auto px-4">
+        <slot />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .blog-post {
+    padding-top: 100px;
+    min-height: 100vh;
+  }
+
+  .post-header {
+    padding: 40px 0;
+    background: var(--secondary-bg);
+    margin-bottom: 40px;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--button-bg);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: var(--button-hover);
+  }
+
+  .post-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .post-meta {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+
+  .post-updated {
+    opacity: 0.7;
+    margin-left: 4px;
+  }
+
+  .post-author {
+    margin-left: 8px;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .post-tag {
+    padding: 4px 12px;
+    background: rgba(9, 167, 224, 0.1);
+    color: var(--accent-color);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .post-content {
+    padding-bottom: 60px;
+  }
+
+  .post-content :global(h2) {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-content :global(h3) {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-content :global(p) {
+    color: var(--text-color);
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+
+  .post-content :global(a) {
+    color: var(--button-bg);
+    text-decoration: underline;
+  }
+
+  .post-content :global(a:hover) {
+    color: var(--button-hover);
+  }
+
+  .post-content :global(code) {
+    background: var(--secondary-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .post-content :global(pre) {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .post-content :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .post-content :global(ul),
+  .post-content :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+    color: var(--text-color);
+  }
+
+  .post-content :global(li) {
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+  }
+
+  .post-content :global(blockquote) {
+    border-left: 4px solid var(--accent-color);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--text-color);
+    font-style: italic;
+  }
+
+  .post-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+  }
+</style>

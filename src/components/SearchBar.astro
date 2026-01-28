@@ -1,0 +1,241 @@
+---
+import type { Lang } from '@/i18n';
+import { useTranslations } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="search-wrapper">
+  <button
+    id="search-toggle"
+    class="search-toggle"
+    aria-label={t('search.placeholder')}
+    type="button"
+  >
+    <i class="fas fa-search"></i>
+  </button>
+
+  <div id="search-modal" class="search-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="search-modal-backdrop" id="search-backdrop"></div>
+    <div class="search-modal-content">
+      <button id="search-close" class="search-close" aria-label="Close search">
+        <i class="fas fa-times"></i>
+      </button>
+      <div id="search-container" data-lang={lang}></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Pagefind UI initialization
+  async function initPagefind() {
+    const container = document.getElementById('search-container');
+    if (!container) return;
+
+    const lang = container.dataset.lang || 'en';
+
+    try {
+      // Check if pagefind exists first
+      const response = await fetch('/pagefind/pagefind-ui.js', { method: 'HEAD' });
+      if (!response.ok) throw new Error('Pagefind not found');
+
+      // Load pagefind CSS
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/pagefind/pagefind-ui.css';
+      document.head.appendChild(link);
+
+      // Load pagefind dynamically at runtime
+      const script = document.createElement('script');
+      script.src = '/pagefind/pagefind-ui.js';
+      script.onload = () => {
+        // @ts-ignore
+        new window.PagefindUI({
+          element: '#search-container',
+          showSubResults: true,
+          showImages: false,
+          translations: {
+            placeholder: lang === 'it' ? 'Cerca nel sito...' : 'Search the site...',
+            zero_results: lang === 'it' ? 'Nessun risultato per "[SEARCH_TERM]"' : 'No results for "[SEARCH_TERM]"',
+            many_results: lang === 'it' ? '[COUNT] risultati' : '[COUNT] results',
+            one_result: lang === 'it' ? '1 risultato' : '1 result',
+          },
+        });
+      };
+      document.head.appendChild(script);
+    } catch (e) {
+      // Pagefind not available (dev mode or not built yet)
+      container.innerHTML = `
+        <p style="text-align: center; color: var(--text-color); padding: 20px;">
+          ${lang === 'it' ? 'La ricerca sarà disponibile dopo il build.' : 'Search will be available after build.'}
+        </p>
+      `;
+    }
+  }
+
+  // Modal controls
+  const searchToggle = document.getElementById('search-toggle');
+  const searchModal = document.getElementById('search-modal');
+  const searchClose = document.getElementById('search-close');
+  const searchBackdrop = document.getElementById('search-backdrop');
+
+  let pagefindInitialized = false;
+
+  function openSearch() {
+    searchModal?.classList.add('active');
+    searchModal?.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    if (!pagefindInitialized) {
+      initPagefind();
+      pagefindInitialized = true;
+    }
+
+    // Focus on search input after a small delay
+    setTimeout(() => {
+      const input = document.querySelector('.pagefind-ui__search-input') as HTMLInputElement;
+      input?.focus();
+    }, 100);
+  }
+
+  function closeSearch() {
+    searchModal?.classList.remove('active');
+    searchModal?.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  searchToggle?.addEventListener('click', openSearch);
+  searchClose?.addEventListener('click', closeSearch);
+  searchBackdrop?.addEventListener('click', closeSearch);
+
+  // Close on escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && searchModal?.classList.contains('active')) {
+      closeSearch();
+    }
+  });
+
+  // Keyboard shortcut: Cmd/Ctrl + K
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      if (searchModal?.classList.contains('active')) {
+        closeSearch();
+      } else {
+        openSearch();
+      }
+    }
+  });
+</script>
+
+<style>
+  .search-wrapper {
+    position: relative;
+  }
+
+  .search-toggle {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+  }
+
+  .search-toggle:hover {
+    color: var(--accent-color);
+  }
+
+  .search-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .search-modal.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .search-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .search-modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+
+  .search-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    z-index: 10;
+    transition: color 0.3s ease;
+  }
+
+  .search-close:hover {
+    color: var(--primary-color);
+  }
+
+  /* Pagefind UI Customization */
+  #search-container {
+    padding: 20px;
+  }
+
+  :global(.pagefind-ui) {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: var(--button-bg);
+    --pagefind-ui-text: var(--primary-color);
+    --pagefind-ui-background: white;
+    --pagefind-ui-border: #e5e5e5;
+    --pagefind-ui-tag: var(--secondary-bg);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-font: 'Roboto', sans-serif;
+  }
+
+  :global(.pagefind-ui__search-input) {
+    font-size: 1.1rem !important;
+    padding: 12px 16px !important;
+  }
+
+  :global(.pagefind-ui__result-link) {
+    color: var(--button-bg) !important;
+    font-weight: 600 !important;
+  }
+
+  :global(.pagefind-ui__result-excerpt) {
+    color: var(--text-color) !important;
+  }
+</style>
+
+<!-- Pagefind CSS loaded dynamically when available -->

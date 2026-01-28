@@ -1,0 +1,16 @@
+---
+// Redirect to the appropriate language version
+const savedLang = Astro.cookies.get('alexdevflow-lang')?.value;
+const acceptLanguage = Astro.request.headers.get('accept-language') || '';
+const browserLang = acceptLanguage.slice(0, 2);
+
+// Priority: saved preference > browser language > default (en)
+let targetLang = 'en';
+if (savedLang === 'it' || savedLang === 'en') {
+  targetLang = savedLang;
+} else if (browserLang === 'it') {
+  targetLang = 'it';
+}
+
+return Astro.redirect(`/${targetLang}/`);
+---

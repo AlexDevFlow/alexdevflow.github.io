@@ -1,0 +1,56 @@
+---
+import { getAlternateLang, type Lang } from '@/i18n';
+
+interface Props {
+  currentLang: Lang;
+  class?: string;
+}
+
+const { currentLang, class: className } = Astro.props;
+const alternateLang = getAlternateLang(currentLang);
+const currentPath = Astro.url.pathname.replace(`/${currentLang}`, '') || '/';
+const alternateUrl = `/${alternateLang}${currentPath}`;
+---
+
+<div class:list={['language-switch', className]}>
+  <a
+    href={alternateUrl}
+    id="langToggle"
+    role="button"
+    aria-label={currentLang === 'it' ? 'Switch to English' : 'Passa a Italiano'}
+    data-current={currentLang}
+  >
+    {currentLang === 'it' ? '🇮🇹 Italiano' : '🇬🇧 English'}
+  </a>
+</div>
+
+<script>
+  // Save language preference when clicking
+  document.getElementById('langToggle')?.addEventListener('click', (e) => {
+    const target = e.currentTarget as HTMLAnchorElement;
+    const currentLang = target.dataset.current;
+    const nextLang = currentLang === 'en' ? 'it' : 'en';
+    localStorage.setItem('alexdevflow-lang', nextLang);
+  });
+</script>
+
+<style>
+  .language-switch a {
+    display: inline-block;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #3498db, #2ecc71);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-family: 'Roboto', sans-serif;
+    text-decoration: none;
+  }
+
+  .language-switch a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+</style>

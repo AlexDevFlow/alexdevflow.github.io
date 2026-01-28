@@ -1,0 +1,48 @@
+---
+import BaseHead from '@/components/BaseHead.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { useTranslations, type Lang } from '@/i18n';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang: Lang;
+  headerVariant?: 'default' | 'portfolio' | 'minimal';
+  currentPage?: string;
+  showFooter?: boolean;
+}
+
+const {
+  title,
+  description,
+  lang,
+  headerVariant = 'default',
+  currentPage = '',
+  showFooter = true
+} = Astro.props;
+
+const t = useTranslations(lang);
+const finalDescription = description || t('meta.description');
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <BaseHead title={title} description={finalDescription} lang={lang} />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">
+      {t('a11y.skipToContent')}
+    </a>
+
+    <Header lang={lang} currentPage={currentPage} variant={headerVariant} />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    {showFooter && <Footer lang={lang} />}
+  </body>
+</html>

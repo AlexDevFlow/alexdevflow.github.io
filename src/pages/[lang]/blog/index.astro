@@ -1,0 +1,97 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import BlogPostCard from '@/components/BlogPostCard.astro';
+import { useTranslations, languages, type Lang } from '@/i18n';
+import { getCollection } from 'astro:content';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+// Get blog posts for current language, excluding drafts
+const allPosts = await getCollection('blog', ({ id, data }) => {
+  return id.startsWith(`${lang}/`) && !data.draft;
+});
+
+// Sort by publish date (newest first)
+const posts = allPosts.sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+---
+
+<BaseLayout title={`${t('blog.title')} | Alessandro Trysh`} lang={lang}>
+  <div class="blog-page">
+    <header class="blog-header">
+      <h1 class="blog-title">{t('blog.title')}</h1>
+      <p class="blog-subtitle">{t('blog.subtitle')}</p>
+    </header>
+
+    <div class="blog-content">
+      {posts.length > 0 ? (
+        <div class="posts-grid">
+          {posts.map((post) => (
+            <BlogPostCard post={post} lang={lang} />
+          ))}
+        </div>
+      ) : (
+        <div class="no-posts">
+          <p>{t('blog.noPosts')}</p>
+          <a href={`/${lang}/`} class="btn">{t('blog.back')}</a>
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .blog-page {
+    min-height: 100vh;
+    padding-top: 100px;
+    background: var(--primary-bg);
+  }
+
+  .blog-header {
+    text-align: center;
+    padding: 40px 20px 60px;
+  }
+
+  .blog-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 12px;
+  }
+
+  .blog-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-color);
+  }
+
+  .blog-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  .posts-grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .no-posts p {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 24px;
+  }
+</style>

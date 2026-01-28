@@ -1,0 +1,99 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Card from '@/components/Card.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { useTranslations, languages, type Lang } from '@/i18n';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('meta.title')}
+  lang={lang}
+  headerVariant="minimal"
+  showFooter={false}
+>
+  <div class="home-container">
+    <LanguageSwitcher currentLang={lang} />
+
+    <header class="home-header">
+      <h1 class="home-title">Alex</h1>
+      <p class="home-subtitle">{t('home.subtitle')}</p>
+    </header>
+
+    <div class="cards-container">
+      <Card
+        href={`/${lang}/portfolio`}
+        title={t('home.cardPortfolio')}
+        lottieIcon="/lottie/portfolio.lottie"
+      />
+      <Card
+        href={`/${lang}/blog`}
+        title={t('home.cardBlog')}
+        lottieIcon="/lottie/blog.lottie"
+      />
+      <Card
+        href={`/${lang}/lab`}
+        title={t('home.cardLab')}
+        lottieIcon="/lottie/lab.lottie"
+      />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .home-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: var(--primary-bg);
+  }
+
+  .home-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .home-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(3rem, 10vw, 5rem);
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+
+  .home-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-color);
+  }
+
+  .cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    max-width: 900px;
+  }
+
+  .cards-container > :global(.home-card) {
+    flex: 1 1 250px;
+    max-width: 280px;
+  }
+
+  @media (max-width: 640px) {
+    .cards-container > :global(.home-card) {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+</style>

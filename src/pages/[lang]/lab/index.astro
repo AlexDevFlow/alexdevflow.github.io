@@ -1,0 +1,89 @@
+---
+import BaseHead from '@/components/BaseHead.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import ParticleCanvas from '@/components/ParticleCanvas.astro';
+import { useTranslations, languages, type Lang } from '@/i18n';
+import '@/styles/global.css';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <BaseHead
+      title={`${t('lab.title')} | Alessandro Trysh`}
+      description="Interactive lab experiments by Alessandro Trysh."
+      lang={lang}
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: block;
+        min-height: 100vh;
+        background-color: var(--primary-bg);
+        overflow: hidden;
+      }
+
+      main {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3rem;
+        min-height: 100vh;
+        width: 100%;
+        padding: 2.5rem 1.5rem 3rem;
+        box-sizing: border-box;
+        text-align: center;
+      }
+
+      .back-button {
+        display: inline-block;
+        margin-top: 2.5rem;
+        padding: 12px 25px;
+        background-color: var(--button-bg);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: none;
+        z-index: 1;
+        position: relative;
+      }
+
+      @media (max-width: 768px) {
+        .back-button {
+          margin-top: 150px;
+          font-size: 1rem;
+          padding: 10px 20px;
+        }
+      }
+
+      .back-button:hover {
+        background-color: var(--button-hover);
+        transform: translateY(-3px);
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{t('a11y.skipToContent')}</a>
+    <LanguageSwitcher currentLang={lang} />
+
+    <main id="main-content">
+      <ParticleCanvas lang={lang} />
+      <a href={`/${lang}/`} class="back-button">{t('lab.back')}</a>
+    </main>
+  </body>
+</html>

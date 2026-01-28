@@ -1,0 +1,30 @@
+---
+interface Props {
+  email?: string;
+  github?: string;
+}
+
+const {
+  email = 'alexdev@alexdevflow.com',
+  github = 'https://github.com/alexdevflow'
+} = Astro.props;
+---
+
+<div class="flex justify-center gap-8">
+  <a
+    href={`mailto:${email}`}
+    class="contact-icon"
+    aria-label="Email"
+  >
+    <i class="fas fa-envelope"></i>
+  </a>
+  <a
+    href={github}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="contact-icon"
+    aria-label="GitHub"
+  >
+    <i class="fab fa-github"></i>
+  </a>
+</div>
