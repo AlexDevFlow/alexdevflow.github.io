@@ -9,6 +9,9 @@ export default defineConfig({
   build: {
     format: 'directory'
   },
+  redirects: {
+    '/': '/en/'
+  },
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'it'],

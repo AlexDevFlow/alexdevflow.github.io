@@ -27,7 +27,7 @@ export const ui = {
 
     // About
     'about.title': 'About Me',
-    'about.p1': 'I am a computer science student with a strong passion for automation, artificial intelligence, and cybersecurity. My goal is to apply my skills in innovative and challenging environments, contributing to projects that have a significant impact.',
+    'about.p1': 'I am a computer science student with a strong passion for automation, artificial intelligence, and cybersecurity.',
     'about.p2': 'Today I collaborate with small and medium businesses, helping them build websites, visuals, and providing consulting to understand their real needs.',
     'about.cta': "Do you think this fits you? Let's talk!",
 
@@ -111,7 +111,7 @@ export const ui = {
 
     // About
     'about.title': 'Chi sono',
-    'about.p1': "Sono uno studente di informatica con una forte passione per l'automazione, l'intelligenza artificiale e la cybersecurity. Il mio obiettivo è applicare le mie competenze in contesti innovativi e stimolanti, contribuendo a progetti ad alto impatto.",
+    'about.p1': "Sono uno studente di informatica con una forte passione per l'automazione, l'intelligenza artificiale e la cybersecurity.",
     'about.p2': 'Oggi collaboro con piccole e medie imprese aiutandole a sviluppare siti web, grafiche e fornendo consulenza per comprendere le loro reali necessità.',
     'about.cta': 'Pensi sia il tuo caso? Parliamone!',
 
