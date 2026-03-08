@@ -12,6 +12,7 @@ interface Props {
   headerVariant?: 'default' | 'portfolio' | 'minimal';
   currentPage?: string;
   showFooter?: boolean;
+  hideLanguageSwitcher?: boolean;
 }
 
 const {
@@ -20,7 +21,8 @@ const {
   lang,
   headerVariant = 'default',
   currentPage = '',
-  showFooter = true
+  showFooter = true,
+  hideLanguageSwitcher = false,
 } = Astro.props;
 
 const t = useTranslations(lang);
@@ -37,7 +39,7 @@ const finalDescription = description || t('meta.description');
       {t('a11y.skipToContent')}
     </a>
 
-    <Header lang={lang} currentPage={currentPage} variant={headerVariant} />
+    <Header lang={lang} currentPage={currentPage} variant={headerVariant} hideLanguageSwitcher={hideLanguageSwitcher} />
 
     <main id="main-content">
       <slot />

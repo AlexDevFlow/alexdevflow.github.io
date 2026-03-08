@@ -30,64 +30,133 @@ const formattedUpdateDate = updatedDate
   : null;
 ---
 
-<BaseLayout title={`${title} | ${t('blog.title')}`} description={description} lang={lang}>
+<BaseLayout title={`${title} | ${t('blog.title')}`} description={description} lang={lang} hideLanguageSwitcher={true}>
+  <!-- Reading progress bar -->
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
   <article class="blog-post" data-pagefind-body data-pagefind-meta={`category:blog`}>
     <header class="post-header">
-      <div class="max-w-3xl mx-auto px-4">
-        <a href={`/${lang}/blog`} class="back-link">
+      <div class="header-content">
+        <a href={`/${lang}/blog`} class="back-btn" aria-label={t('blog.title')}>
           &larr; {t('blog.title')}
         </a>
         <h1 class="post-title" data-pagefind-meta="title">{title}</h1>
+        <p class="post-description">{description}</p>
         <div class="post-meta">
+          <span class="post-author">{author}</span>
+          <span class="post-meta-sep">/</span>
           <span class="post-date">{formattedPublishDate}</span>
           {formattedUpdateDate && (
             <span class="post-updated">
               ({lang === 'it' ? 'Aggiornato' : 'Updated'}: {formattedUpdateDate})
             </span>
           )}
-          <span class="post-author">• {author}</span>
         </div>
-        {tags.length > 0 && (
-          <div class="post-tags">
-            {tags.map((tag) => (
-              <span class="post-tag">{tag}</span>
-            ))}
-          </div>
-        )}
       </div>
     </header>
 
-    <div class="post-content">
-      <div class="max-w-3xl mx-auto px-4">
+    <div class="post-body">
+      <!-- Desktop TOC sidebar -->
+      <aside class="toc-sidebar" id="tocSidebar" aria-label="Table of Contents">
+        <div class="toc-sticky">
+          <div class="toc-title">{lang === 'it' ? 'Indice' : 'On this page'}</div>
+          <nav id="tocNav"></nav>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div class="post-content" id="postContent">
         <slot />
       </div>
     </div>
   </article>
+
+  <!-- Mobile TOC toggle -->
+  <button class="toc-mobile-toggle" id="tocMobileToggle" aria-label="Table of Contents">
+    <i class="fas fa-list-ul"></i>
+  </button>
+
+  <!-- Mobile TOC overlay -->
+  <div class="toc-mobile-overlay" id="tocMobileOverlay" aria-hidden="true">
+    <div class="toc-mobile-panel">
+      <div class="toc-mobile-header">
+        <span class="toc-title">{lang === 'it' ? 'Indice' : 'On this page'}</span>
+        <button class="toc-mobile-close" id="tocMobileClose" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <nav id="tocMobileNav"></nav>
+    </div>
+  </div>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
 </BaseLayout>
 
 <style>
+  /* ═══════════════════════════════════════════
+     PROGRESS BAR
+     ═══════════════════════════════════════════ */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-color), var(--button-bg));
+    z-index: 9999;
+    transition: width 50ms linear;
+  }
+
+  /* ═══════════════════════════════════════════
+     POST HEADER
+     ═══════════════════════════════════════════ */
   .blog-post {
     padding-top: 100px;
     min-height: 100vh;
   }
 
   .post-header {
-    padding: 40px 0;
+    padding: 48px 0;
     background: var(--secondary-bg);
-    margin-bottom: 40px;
+    margin-bottom: 48px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
 
-  .back-link {
-    display: inline-block;
-    color: var(--button-bg);
+  .header-content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  @media (min-width: 1200px) {
+    .header-content {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    background: var(--button-bg);
+    color: white;
     text-decoration: none;
     font-weight: 500;
-    margin-bottom: 20px;
-    transition: color 0.3s ease;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .back-link:hover {
-    color: var(--button-hover);
+  .back-btn:hover {
+    background: var(--button-hover);
+    transform: translateX(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .post-title {
@@ -95,98 +164,510 @@ const formattedUpdateDate = updatedDate
     font-size: clamp(1.75rem, 5vw, 2.5rem);
     font-weight: 700;
     color: var(--primary-color);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .post-description {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    line-height: 1.6;
+    margin-bottom: 20px;
   }
 
   .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
     color: var(--text-color);
-    font-size: 0.95rem;
-    margin-bottom: 16px;
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  .post-meta-sep {
+    opacity: 0.4;
   }
 
   .post-updated {
     opacity: 0.7;
-    margin-left: 4px;
   }
 
-  .post-author {
-    margin-left: 8px;
-  }
-
-  .post-tags {
+  /* ═══════════════════════════════════════════
+     POST BODY LAYOUT
+     ═══════════════════════════════════════════ */
+  .post-body {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .post-tag {
-    padding: 4px 12px;
-    background: rgba(9, 167, 224, 0.1);
-    color: var(--accent-color);
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 500;
+    gap: 48px;
+    padding: 0 24px 80px;
+    position: relative;
   }
 
   .post-content {
-    padding-bottom: 60px;
+    flex: 1;
+    max-width: 780px;
+    min-width: 0;
   }
 
+  @media (max-width: 1199px) {
+    .post-body {
+      flex-direction: column;
+      max-width: 780px;
+    }
+    .post-content {
+      max-width: 100%;
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     TABLE OF CONTENTS – DESKTOP SIDEBAR
+     ═══════════════════════════════════════════ */
+  .toc-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    display: none;
+  }
+
+  @media (min-width: 1200px) {
+    .toc-sidebar {
+      display: block;
+    }
+  }
+
+  .toc-sticky {
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  }
+
+  .toc-sticky::-webkit-scrollbar {
+    width: 4px;
+  }
+  .toc-sticky::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+  }
+
+  .toc-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-color);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(9, 167, 224, 0.2);
+  }
+
+  .toc-sidebar :global(.toc-list) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-sidebar :global(.toc-item) {
+    margin: 0;
+  }
+
+  .toc-sidebar :global(.toc-link) {
+    display: block;
+    padding: 6px 0 6px 12px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
+    opacity: 0.75;
+  }
+
+  .toc-sidebar :global(.toc-link:hover) {
+    color: var(--accent-color);
+    opacity: 1;
+  }
+
+  .toc-sidebar :global(.toc-link.active) {
+    color: var(--primary-color);
+    border-left-color: var(--accent-color);
+    opacity: 1;
+    font-weight: 700;
+    background: rgba(9, 167, 224, 0.06);
+    border-radius: 0 6px 6px 0;
+  }
+
+  .toc-sidebar :global(.toc-link.toc-h3) {
+    padding-left: 24px;
+    font-size: 0.78rem;
+  }
+
+  /* ═══════════════════════════════════════════
+     TABLE OF CONTENTS – MOBILE
+     ═══════════════════════════════════════════ */
+  .toc-mobile-toggle {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 80px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--button-bg);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+    z-index: 90;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toc-mobile-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+  }
+
+  @media (max-width: 1199px) {
+    .toc-mobile-toggle {
+      display: flex;
+    }
+  }
+
+  .toc-mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .toc-mobile-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .toc-mobile-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: min(360px, 85vw);
+    background: white;
+    padding: 24px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .toc-mobile-overlay.active .toc-mobile-panel {
+    transform: translateX(0);
+  }
+
+  .toc-mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(9, 167, 224, 0.2);
+  }
+
+  .toc-mobile-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--secondary-bg);
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+  }
+
+  .toc-mobile-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .toc-mobile-panel :global(.toc-list) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-mobile-panel :global(.toc-link) {
+    display: block;
+    padding: 10px 0 10px 12px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .toc-mobile-panel :global(.toc-link:hover) {
+    color: var(--accent-color);
+    border-left-color: var(--accent-color);
+  }
+
+  .toc-mobile-panel :global(.toc-link.active) {
+    color: var(--primary-color);
+    border-left-color: var(--accent-color);
+    font-weight: 700;
+    background: rgba(9, 167, 224, 0.06);
+    border-radius: 0 6px 6px 0;
+  }
+
+  .toc-mobile-panel :global(.toc-link.toc-h3) {
+    padding-left: 24px;
+    font-size: 0.85rem;
+  }
+
+  /* ═══════════════════════════════════════════
+     BACK TO TOP
+     ═══════════════════════════════════════════ */
+  .back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 90;
+    font-size: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .back-to-top:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+  }
+
+  /* ═══════════════════════════════════════════
+     GITHUB REPO BUTTON
+     ═══════════════════════════════════════════ */
+  .post-content :global(.github-repo-btn) {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: #24292e;
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 10px;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content :global(.github-repo-btn:hover) {
+    background: #1a1e22;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    color: white !important;
+  }
+
+  .post-content :global(.github-repo-btn i) {
+    font-size: 1.2em;
+  }
+
+  /* ═══════════════════════════════════════════
+     CONTENT TYPOGRAPHY
+     ═══════════════════════════════════════════ */
   .post-content :global(h2) {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.75rem;
+    font-size: clamp(1.4rem, 3vw, 1.75rem);
     font-weight: 700;
     color: var(--primary-color);
-    margin-top: 2rem;
+    margin-top: 3rem;
     margin-bottom: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    scroll-margin-top: 80px;
+    line-height: 1.3;
+  }
+
+  .post-content :global(h2:first-child) {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
   }
 
   .post-content :global(h3) {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.35rem;
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
     font-weight: 600;
     color: var(--primary-color);
-    margin-top: 1.5rem;
+    margin-top: 2rem;
     margin-bottom: 0.75rem;
+    scroll-margin-top: 80px;
+    line-height: 1.3;
   }
 
   .post-content :global(p) {
     color: var(--text-color);
-    line-height: 1.8;
+    line-height: 1.85;
     margin-bottom: 1.25rem;
+    font-size: 1.02rem;
   }
 
   .post-content :global(a) {
     color: var(--button-bg);
     text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
   }
 
   .post-content :global(a:hover) {
     color: var(--button-hover);
   }
 
+  .post-content :global(strong) {
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+
+  .post-content :global(hr) {
+    border: none;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+    margin: 3rem 0;
+  }
+
+  /* ═══════════════════════════════════════════
+     CODE BLOCKS
+     ═══════════════════════════════════════════ */
   .post-content :global(code) {
-    background: var(--secondary-bg);
-    padding: 2px 6px;
+    background: rgba(9, 167, 224, 0.08);
+    color: var(--primary-color);
+    padding: 2px 7px;
     border-radius: 4px;
-    font-size: 0.9em;
+    font-size: 0.88em;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+    word-break: break-word;
   }
 
   .post-content :global(pre) {
-    background: #1e1e1e;
-    color: #d4d4d4;
-    padding: 20px;
-    border-radius: 8px;
+    position: relative;
+    border-radius: 10px;
     overflow-x: auto;
-    margin: 1.5rem 0;
+    margin: 1.75rem 0;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
 
   .post-content :global(pre code) {
     background: none;
     padding: 0;
+    border-radius: 0;
+    font-size: inherit;
+    color: inherit;
+    word-break: normal;
   }
 
+  /* Ensure Shiki-generated pre blocks have padding */
+  .post-content :global(pre[style]) {
+    padding: 20px 24px;
+  }
+
+  /* Fallback for non-Shiki pre blocks */
+  .post-content :global(pre:not([style])) {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 20px 24px;
+  }
+
+  /* Copy button injected via JS */
+  .post-content :global(.code-block-wrapper) {
+    position: relative;
+  }
+
+  .post-content :global(.copy-btn) {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    z-index: 2;
+    opacity: 0;
+    backdrop-filter: blur(4px);
+  }
+
+  .post-content :global(.code-block-wrapper:hover .copy-btn) {
+    opacity: 1;
+  }
+
+  .post-content :global(.copy-btn:hover) {
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .post-content :global(.copy-btn.copied) {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.3);
+  }
+
+  /* Language label injected via JS */
+  .post-content :global(.code-lang) {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    font-size: 0.7rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.35);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* ═══════════════════════════════════════════
+     LISTS
+     ═══════════════════════════════════════════ */
   .post-content :global(ul),
   .post-content :global(ol) {
     margin-bottom: 1.25rem;
@@ -196,21 +677,522 @@ const formattedUpdateDate = updatedDate
 
   .post-content :global(li) {
     margin-bottom: 0.5rem;
-    line-height: 1.7;
+    line-height: 1.75;
+    font-size: 1.02rem;
   }
 
+  .post-content :global(li code) {
+    font-size: 0.86em;
+  }
+
+  /* ═══════════════════════════════════════════
+     BLOCKQUOTES
+     ═══════════════════════════════════════════ */
   .post-content :global(blockquote) {
     border-left: 4px solid var(--accent-color);
-    padding-left: 1rem;
+    padding: 12px 20px;
     margin: 1.5rem 0;
+    background: rgba(9, 167, 224, 0.04);
+    border-radius: 0 8px 8px 0;
     color: var(--text-color);
     font-style: italic;
   }
 
+  .post-content :global(blockquote p) {
+    margin-bottom: 0;
+  }
+
+  /* ═══════════════════════════════════════════
+     TABLES
+     ═══════════════════════════════════════════ */
+  .post-content :global(.table-wrapper) {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .post-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 500px;
+  }
+
+  .post-content :global(thead) {
+    background: var(--secondary-bg);
+  }
+
+  .post-content :global(th) {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .post-content :global(td) {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    line-height: 1.6;
+    color: var(--text-color);
+  }
+
+  .post-content :global(tr:last-child td) {
+    border-bottom: none;
+  }
+
+  .post-content :global(tbody tr:hover) {
+    background: rgba(9, 167, 224, 0.03);
+  }
+
+  /* ═══════════════════════════════════════════
+     IMAGES
+     ═══════════════════════════════════════════ */
   .post-content :global(img) {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  /* ═══════════════════════════════════════════
+     MERMAID DIAGRAMS
+     ═══════════════════════════════════════════ */
+  .post-content :global(.mermaid-diagram) {
+    margin: 2rem 0;
+    padding: 24px;
+    background: var(--secondary-bg);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .post-content :global(.mermaid-diagram svg) {
+    height: auto;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  /* ═══════════════════════════════════════════
+     CHECKPOINT CALLOUTS (injected via JS)
+     ═══════════════════════════════════════════ */
+  .post-content :global(.checkpoint-callout) {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.08), rgba(9, 167, 224, 0.06));
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    border-left: 4px solid #2ecc71;
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px;
     margin: 1.5rem 0;
   }
+
+  .post-content :global(.checkpoint-callout strong) {
+    color: #27ae60;
+  }
+
+  /* ═══════════════════════════════════════════
+     INLINE TOC (the markdown TOC list)
+     ═══════════════════════════════════════════ */
+  .post-content :global(.inline-toc) {
+    background: var(--secondary-bg);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 1.5rem 0;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .post-content :global(.inline-toc ol) {
+    margin-bottom: 0;
+  }
+
+  .post-content :global(.inline-toc li) {
+    margin-bottom: 6px;
+  }
+
+  .post-content :global(.inline-toc a) {
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .post-content :global(.inline-toc a:hover) {
+    text-decoration: underline;
+  }
+
+  /* ═══════════════════════════════════════════
+     RESPONSIVE
+     ═══════════════════════════════════════════ */
+  @media (max-width: 640px) {
+    .post-header {
+      padding: 32px 0;
+      margin-bottom: 32px;
+    }
+
+    .header-content {
+      padding: 0 16px;
+    }
+
+    .post-body {
+      padding: 0 16px 60px;
+    }
+
+    .post-meta {
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+
+    .post-content :global(pre) {
+      border-radius: 8px;
+      margin-left: -16px;
+      margin-right: -16px;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+
+    .post-content :global(pre[style]),
+    .post-content :global(pre:not([style])) {
+      padding: 16px;
+    }
+
+    .post-content :global(h2) {
+      margin-top: 2.5rem;
+    }
+
+    .post-content :global(p),
+    .post-content :global(li) {
+      font-size: 0.98rem;
+    }
+  }
 </style>
+
+<!-- Mermaid.js for diagrams -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#e8d5b7',
+      primaryTextColor: '#333333',
+      primaryBorderColor: '#09a7e0',
+      lineColor: '#555555',
+      secondaryColor: '#f1ece2',
+      tertiaryColor: '#ffffff',
+      noteBkgColor: '#f1ece2',
+      noteTextColor: '#333333',
+      noteBorderColor: '#09a7e0',
+      actorBkg: '#e8d5b7',
+      actorBorder: '#09a7e0',
+      actorTextColor: '#333333',
+      signalColor: '#555555',
+      signalTextColor: '#333333',
+      fontFamily: 'Roboto, sans-serif',
+    },
+    sequence: {
+      actorMargin: 60,
+      messageMargin: 40,
+    },
+    flowchart: {
+      curve: 'basis',
+      padding: 24,
+      useMaxWidth: false,
+      htmlLabels: true,
+    },
+  });
+
+  // Find all mermaid code blocks rendered by Shiki and convert them
+  document.addEventListener('DOMContentLoaded', async () => {
+    const postContent = document.getElementById('postContent');
+    if (!postContent) return;
+
+    const preBlocks = postContent.querySelectorAll('pre');
+    let mermaidCounter = 0;
+
+    for (const pre of preBlocks) {
+      const code = pre.querySelector('code');
+      const lang = pre.getAttribute('data-language')
+        || code?.className?.match(/language-(\w+)/)?.[1];
+
+      if (lang === 'mermaid') {
+        const mermaidSource = code?.textContent || '';
+        if (!mermaidSource.trim()) continue;
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-diagram';
+        const id = `mermaid-${mermaidCounter++}`;
+
+        try {
+          const { svg } = await mermaid.render(id, mermaidSource.trim());
+          container.innerHTML = svg;
+          // Expand SVG viewBox and remove max-width to prevent text clipping
+          const svgEl = container.querySelector('svg');
+          if (svgEl) {
+            svgEl.style.maxWidth = 'none';
+            svgEl.removeAttribute('width');
+            const vb = svgEl.getAttribute('viewBox');
+            if (vb) {
+              const [x, y, w, h] = vb.split(' ').map(Number);
+              svgEl.setAttribute('viewBox', `${x - 20} ${y - 10} ${w + 40} ${h + 20}`);
+              svgEl.setAttribute('width', w + 40);
+            }
+          }
+          pre.parentNode?.replaceChild(container, pre);
+        } catch (e) {
+          console.warn('Mermaid render failed:', e);
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const postContent = document.getElementById('postContent');
+    if (!postContent) return;
+
+    // ──────────────────────────────────────────
+    // READING PROGRESS BAR
+    // ──────────────────────────────────────────
+    const progressBar = document.getElementById('progressBar');
+    function updateProgress() {
+      if (!progressBar) return;
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      progressBar.style.width = `${Math.min(100, progress)}%`;
+    }
+
+    // ──────────────────────────────────────────
+    // TABLE OF CONTENTS
+    // ──────────────────────────────────────────
+    const headings = postContent.querySelectorAll('h2, h3');
+    const tocNav = document.getElementById('tocNav');
+    const tocMobileNav = document.getElementById('tocMobileNav');
+
+    function buildToc(container) {
+      if (!container || headings.length === 0) return;
+      const ul = document.createElement('ul');
+      ul.className = 'toc-list';
+
+      headings.forEach((heading) => {
+        if (heading.textContent?.trim() === 'Table of Contents') return;
+
+        const li = document.createElement('li');
+        li.className = 'toc-item';
+
+        const a = document.createElement('a');
+        a.className = `toc-link toc-${heading.tagName.toLowerCase()}`;
+        a.href = `#${heading.id}`;
+
+        let linkText = heading.textContent || '';
+        linkText = linkText.replace(/^Part\s+\d+:\s*/, '');
+        a.textContent = linkText;
+
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          heading.scrollIntoView({ behavior: 'smooth' });
+          const overlay = document.getElementById('tocMobileOverlay');
+          if (overlay?.classList.contains('active')) {
+            overlay.classList.remove('active');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+          }
+        });
+
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+
+      container.appendChild(ul);
+    }
+
+    buildToc(tocNav);
+    buildToc(tocMobileNav);
+
+    // ──────────────────────────────────────────
+    // ACTIVE SECTION TRACKING (using getBoundingClientRect for accuracy)
+    // ──────────────────────────────────────────
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    function updateActiveSection() {
+      let currentId = null;
+
+      // Find the last heading that has scrolled past the top threshold
+      for (const heading of headings) {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= 130) {
+          currentId = heading.id;
+        } else {
+          break;
+        }
+      }
+
+      if (currentId) {
+        // Remove active from ALL toc links, then add to matching ones
+        tocLinks.forEach((link) => {
+          const isMatch = link.getAttribute('href') === `#${currentId}`;
+          link.classList.toggle('active', isMatch);
+        });
+
+        // Auto-scroll the desktop TOC sidebar to keep active visible
+        const stickyContainer = document.querySelector('.toc-sticky');
+        const activeDesktopLink = document.querySelector('#tocNav .toc-link.active');
+        if (stickyContainer && activeDesktopLink) {
+          const linkRect = activeDesktopLink.getBoundingClientRect();
+          const containerRect = stickyContainer.getBoundingClientRect();
+          if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
+            activeDesktopLink.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          }
+        }
+      }
+    }
+
+    // ──────────────────────────────────────────
+    // BACK TO TOP
+    // ──────────────────────────────────────────
+    const backToTop = document.getElementById('backToTop');
+    function updateBackToTop() {
+      if (!backToTop) return;
+      backToTop.classList.toggle('visible', window.scrollY > 600);
+    }
+
+    backToTop?.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Combined scroll handler (throttled via rAF)
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateProgress();
+          updateActiveSection();
+          updateBackToTop();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Initial calls
+    updateProgress();
+    updateActiveSection();
+    updateBackToTop();
+
+    // ──────────────────────────────────────────
+    // MOBILE TOC
+    // ──────────────────────────────────────────
+    const tocToggle = document.getElementById('tocMobileToggle');
+    const tocOverlay = document.getElementById('tocMobileOverlay');
+    const tocClose = document.getElementById('tocMobileClose');
+
+    tocToggle?.addEventListener('click', () => {
+      tocOverlay?.classList.add('active');
+      tocOverlay?.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    });
+
+    function closeMobileToc() {
+      tocOverlay?.classList.remove('active');
+      tocOverlay?.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    tocClose?.addEventListener('click', closeMobileToc);
+    tocOverlay?.addEventListener('click', (e) => {
+      if (e.target === tocOverlay) closeMobileToc();
+    });
+
+    // ──────────────────────────────────────────
+    // CODE BLOCK COPY BUTTONS + LANGUAGE LABELS
+    // (skip mermaid blocks which get replaced)
+    // ──────────────────────────────────────────
+    const preBlocks = postContent.querySelectorAll('pre');
+    preBlocks.forEach((pre) => {
+      const code = pre.querySelector('code');
+      const langClass = code?.className?.match(/language-(\w+)/)?.[1]
+        || pre.className?.match(/language-(\w+)/)?.[1]
+        || pre.getAttribute('data-language');
+
+      // Skip mermaid blocks (they get replaced by the other script)
+      if (langClass === 'mermaid') return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-wrapper';
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      if (langClass && langClass !== 'plaintext') {
+        const langLabel = document.createElement('span');
+        langLabel.className = 'code-lang';
+        langLabel.textContent = langClass;
+        wrapper.appendChild(langLabel);
+      }
+
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.addEventListener('click', async () => {
+        const codeText = code?.textContent || pre.textContent || '';
+        try {
+          await navigator.clipboard.writeText(codeText);
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        } catch {
+          btn.textContent = 'Failed';
+          setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+        }
+      });
+      wrapper.appendChild(btn);
+    });
+
+    // ──────────────────────────────────────────
+    // TABLE RESPONSIVE WRAPPER
+    // ──────────────────────────────────────────
+    const tables = postContent.querySelectorAll('table');
+    tables.forEach((table) => {
+      if (table.parentElement?.classList.contains('table-wrapper')) return;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-wrapper';
+      table.parentNode?.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    });
+
+    // ──────────────────────────────────────────
+    // CHECKPOINT CALLOUTS
+    // ──────────────────────────────────────────
+    const allParagraphs = postContent.querySelectorAll('p');
+    allParagraphs.forEach((p) => {
+      const strong = p.querySelector('strong');
+      if (strong && strong.textContent?.startsWith('Checkpoint')) {
+        p.classList.add('checkpoint-callout');
+      }
+    });
+
+    // ──────────────────────────────────────────
+    // INLINE TOC STYLING
+    // ──────────────────────────────────────────
+    headings.forEach((heading) => {
+      if (heading.textContent?.trim() === 'Table of Contents') {
+        const next = heading.nextElementSibling;
+        if (next && next.tagName === 'OL') {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'inline-toc';
+          heading.parentNode?.insertBefore(wrapper, heading);
+          wrapper.appendChild(heading);
+          wrapper.appendChild(next);
+        }
+      }
+    });
+  });
+</script>

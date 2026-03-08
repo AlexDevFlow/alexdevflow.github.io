@@ -27,13 +27,6 @@ const formattedDate = new Intl.DateTimeFormat(lang === 'it' ? 'it-IT' : 'en-US',
     <h3 class="blog-card-title">{title}</h3>
     <p class="blog-card-date">{formattedDate}</p>
     <p class="blog-card-desc">{description}</p>
-    {tags.length > 0 && (
-      <div class="blog-card-tags">
-        {tags.map((tag) => (
-          <span class="blog-tag">{tag}</span>
-        ))}
-      </div>
-    )}
     <span class="read-more">{t('blog.readMore')} &rarr;</span>
   </a>
 </article>

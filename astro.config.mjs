@@ -6,6 +6,12 @@ export default defineConfig({
   base: '/',
   output: 'static',
   integrations: [tailwind()],
+  markdown: {
+    shikiConfig: {
+      theme: 'github-dark',
+      wrap: false,
+    },
+  },
   build: {
     format: 'directory'
   },

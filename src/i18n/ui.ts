@@ -40,7 +40,7 @@ export const ui = {
     'skills.languages.rust': '<strong>Rust</strong> (with Tauri for GUI)',
     'skills.os.title': 'Operating Systems',
     'skills.os.linux': '<strong>Linux</strong> (Fedora, Pop!_OS)',
-    'skills.os.windows': '<strong>Windows</strong> (Windows Server 2019)',
+    'skills.os.windows': '<strong>Windows</strong> (Windows Server 2022)',
     'skills.other.title': 'Other',
     'skills.other.sql': '<strong>SQL</strong> (MySQL & SQLite)',
     'skills.other.cloud': '<strong>Vercel, Railway</strong>',
@@ -51,7 +51,7 @@ export const ui = {
     'contact.subtitle': 'You can contact me through:',
 
     // Footer
-    'footer.copy': '© 2024 Alessandro Trysh. All rights reserved.',
+    'footer.copy': '© 2026 Alessandro Trysh. All rights reserved.',
     'footer.credit': 'Thanks to <a href="https://notioly.com/">notioly</a> for the icons!',
 
     // Blog
@@ -124,7 +124,7 @@ export const ui = {
     'skills.languages.rust': '<strong>Rust</strong> (con Tauri per GUI)',
     'skills.os.title': 'Sistemi Operativi',
     'skills.os.linux': '<strong>Linux</strong> (Fedora, Pop!_OS)',
-    'skills.os.windows': '<strong>Windows</strong> (Windows Server 2019)',
+    'skills.os.windows': '<strong>Windows</strong> (Windows Server 2022)',
     'skills.other.title': 'Altro',
     'skills.other.sql': '<strong>SQL</strong> (MySQL e SQLite)',
     'skills.other.cloud': '<strong>Vercel, Railway</strong>',
@@ -135,7 +135,7 @@ export const ui = {
     'contact.subtitle': 'Puoi contattarmi tramite:',
 
     // Footer
-    'footer.copy': '© 2024 Alessandro Trysh. Tutti i diritti riservati.',
+    'footer.copy': '© 2026 Alessandro Trysh. Tutti i diritti riservati.',
     'footer.credit': 'Grazie a <a href="https://notioly.com/">notioly</a> per le icone!',
 
     // Blog

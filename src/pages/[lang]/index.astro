@@ -78,22 +78,16 @@ const t = useTranslations(lang);
   }
 
   .cards-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px;
     max-width: 900px;
-  }
-
-  .cards-container > :global(.home-card) {
-    flex: 1 1 250px;
-    max-width: 280px;
+    width: 100%;
   }
 
   @media (max-width: 640px) {
-    .cards-container > :global(.home-card) {
-      flex: 1 1 100%;
-      max-width: 100%;
+    .cards-container {
+      grid-template-columns: 1fr;
     }
   }
 </style>

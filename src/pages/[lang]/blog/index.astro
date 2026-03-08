@@ -1,13 +1,11 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import BlogPostCard from '@/components/BlogPostCard.astro';
-import { useTranslations, languages, type Lang } from '@/i18n';
+import { useTranslations, type Lang } from '@/i18n';
 import { getCollection } from 'astro:content';
 
 export function getStaticPaths() {
-  return Object.keys(languages).map((lang) => ({
-    params: { lang },
-  }));
+  return [{ params: { lang: 'en' } }];
 }
 
 const { lang } = Astro.params as { lang: Lang };
@@ -24,7 +22,7 @@ const posts = allPosts.sort(
 );
 ---
 
-<BaseLayout title={`${t('blog.title')} | Alessandro Trysh`} lang={lang}>
+<BaseLayout title={`${t('blog.title')} | Alessandro Trysh`} lang={lang} hideLanguageSwitcher={true}>
   <div class="blog-page">
     <header class="blog-header">
       <h1 class="blog-title">{t('blog.title')}</h1>
