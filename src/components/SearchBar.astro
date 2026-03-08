@@ -226,22 +226,45 @@ const t = useTranslations(lang);
   :global(.pagefind-ui__search-input) {
     font-size: 1.1rem !important;
     padding: 12px 16px !important;
-    border: 1px solid #e5e5e5 !important;
+    border: 2px solid #e0e0e0 !important;
     border-radius: 8px !important;
     outline: none !important;
     box-shadow: none !important;
     font-family: 'Roboto', sans-serif !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    background: var(--pagefind-ui-background, #fff) !important;
+    color: var(--text-color) !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
   }
 
   :global(.pagefind-ui__search-input:focus) {
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 2px rgba(9, 167, 224, 0.15) !important;
+    border-color: var(--button-bg) !important;
+    box-shadow: 0 0 0 3px rgba(9, 167, 224, 0.12) !important;
+    outline: none !important;
+  }
+
+  :global(.pagefind-ui__search-input::placeholder) {
+    color: #aaa !important;
   }
 
   :global(.pagefind-ui__form) {
     position: relative !important;
+  }
+
+  :global(.pagefind-ui__form::before) {
+    display: none !important;
+  }
+
+  :global(.pagefind-ui__drawer) {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  :global(.pagefind-ui__search-input:focus-visible) {
+    outline: none !important;
   }
 
   :global(.pagefind-ui__search-clear) {
