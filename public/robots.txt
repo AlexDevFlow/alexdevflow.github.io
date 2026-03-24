@@ -1,0 +1,13 @@
+# robots.txt for alexdevflow.github.io
+
+User-agent: *
+Allow: /
+
+# Static assets — no need to index
+Disallow: /lottie/
+Disallow: /images/
+
+# Demo projects — not primary content
+Disallow: /fiorista/
+
+Sitemap: https://alexdevflow.github.io/sitemap-index.xml
