@@ -1,8 +1,8 @@
 export const ui = {
   en: {
     // Meta
-    'meta.title': 'Alessandro Trysh - Software Developer',
-    'meta.description': 'Portfolio of Alessandro Trysh - Computer Science Student & Software Developer',
+    'meta.title': 'Alessandro Trysh - Full Stack Developer',
+    'meta.description': 'Portfolio of Alessandro Trysh - Full Stack Developer',
 
     // Navigation
     'nav.home': 'Home',
@@ -16,13 +16,13 @@ export const ui = {
     'nav.portfolio': 'Portfolio',
 
     // Homepage
-    'home.subtitle': 'Computer Science Student & Developer',
+    'home.subtitle': 'Full Stack Developer',
     'home.cardPortfolio': 'Portfolio',
     'home.cardBlog': 'Blog',
     'home.cardLab': 'Lab',
 
     // Hero
-    'hero.tagline': 'Software Developer & Technology Enthusiast',
+    'hero.tagline': 'Full Stack Developer',
     'hero.cta': 'Contact Me',
 
     // About
@@ -85,8 +85,8 @@ export const ui = {
   },
   it: {
     // Meta
-    'meta.title': 'Alessandro Trysh - Sviluppatore Software',
-    'meta.description': 'Portfolio di Alessandro Trysh - Studente di Informatica e Sviluppatore',
+    'meta.title': 'Alessandro Trysh - Full Stack Developer',
+    'meta.description': 'Portfolio di Alessandro Trysh - Full Stack Developer',
 
     // Navigation
     'nav.home': 'Home',
@@ -100,13 +100,13 @@ export const ui = {
     'nav.portfolio': 'Portfolio',
 
     // Homepage
-    'home.subtitle': 'Studente di Informatica e Sviluppatore',
+    'home.subtitle': 'Full Stack Developer',
     'home.cardPortfolio': 'Portfolio',
     'home.cardBlog': 'Blog',
     'home.cardLab': 'Laboratorio',
 
     // Hero
-    'hero.tagline': 'Sviluppatore software e appassionato di tecnologia',
+    'hero.tagline': 'Full Stack Developer',
     'hero.cta': 'Contattami',
 
     // About

@@ -77,21 +77,25 @@ const isPortfolio = variant === 'portfolio';
 
   <!-- Mobile Menu -->
   <div id="mobile-menu" class="mobile-menu">
-    <button
-      id="mobile-menu-close"
-      class="absolute top-4 right-4 text-white text-3xl"
-      aria-label={t('a11y.closeMenu')}
-    >
-      <i class="fas fa-times"></i>
-    </button>
+    <div class="mobile-menu-header">
+      {!hideLanguageSwitcher && <LanguageSwitcher currentLang={lang} />}
+      <button
+        id="mobile-menu-close"
+        style="background:none;border:none;color:var(--primary-color);font-size:1.75rem;cursor:pointer;padding:0.5rem;line-height:1;opacity:0.6;transition:opacity 0.2s;"
+        onmouseover="this.style.opacity='1'"
+        onmouseout="this.style.opacity='0.6'"
+        aria-label={t('a11y.closeMenu')}
+      >
+        &times;
+      </button>
+    </div>
 
-    <div class="flex flex-col items-center gap-6">
+    <div class="mobile-menu-nav">
       {navItems.map((item) => (
         <a href={item.href} class="mobile-nav-link">
           {item.label}
         </a>
       ))}
-      {!hideLanguageSwitcher && <LanguageSwitcher currentLang={lang} class="mt-4" />}
     </div>
   </div>
 )}
@@ -157,17 +161,6 @@ const isPortfolio = variant === 'portfolio';
   .mobile-menu-overlay.active {
     opacity: 1;
     visibility: visible;
-  }
-
-  .mobile-nav-link {
-    color: white;
-    font-size: 1.5rem;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .mobile-nav-link:hover {
-    color: var(--accent-color);
   }
 
   .nav-link {
