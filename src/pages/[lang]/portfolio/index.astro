@@ -24,7 +24,6 @@ const projects = allProjects.sort((a, b) => a.data.order - b.data.order);
 // Skills data
 const languagesSkills = [
   { icon: 'fab fa-python', iconColor: 'text-blue-500', text: t('skills.languages.python') },
-  { icon: 'fab fa-js', iconColor: 'text-yellow-500', text: t('skills.languages.javascript') },
   { icon: 'fab fa-java', iconColor: 'text-orange-500', text: t('skills.languages.java') },
   { icon: 'fab fa-rust', iconColor: 'text-red-500', text: t('skills.languages.rust') },
 ];
@@ -235,6 +234,7 @@ const otherSkills = [
     duration: 0.8,
     stagger: 0.2,
     ease: 'power1.out',
+    clearProps: 'transform',
     scrollTrigger: {
       trigger: '#projects',
       start: 'top 80%',
