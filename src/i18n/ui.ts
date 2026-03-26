@@ -27,15 +27,14 @@ export const ui = {
 
     // About
     'about.title': 'About Me',
-    'about.p1': 'I am a computer science student with a strong passion for automation, artificial intelligence, and cybersecurity.',
-    'about.p2': 'Today I collaborate with small and medium businesses, helping them build websites, visuals, and providing consulting to understand their real needs.',
+    'about.p1': 'I enjoy building software that solves problems or automates boring tasks. I also find cybersecurity and artificial intelligence fascinating, and I always try to connect them to what I do.',
+    'about.p2': 'Today I help build websites and software, as well as provide consulting to understand what clients truly need.',
     'about.cta': "Do you think this fits you? Let's talk!",
 
     // Skills
     'skills.title': 'My Skills',
     'skills.languages.title': 'Languages',
-    'skills.languages.python': '<strong>Python</strong> (Flask, BS4, Telegram API)',
-    'skills.languages.javascript': '<strong>JavaScript</strong>',
+    'skills.languages.python': '<strong>Python</strong>',
     'skills.languages.java': '<strong>Java</strong>',
     'skills.languages.rust': '<strong>Rust</strong> (with Tauri for GUI)',
     'skills.os.title': 'Operating Systems',
@@ -43,7 +42,7 @@ export const ui = {
     'skills.os.windows': '<strong>Windows</strong> (Windows Server 2022)',
     'skills.other.title': 'Other',
     'skills.other.sql': '<strong>SQL</strong> (MySQL & SQLite)',
-    'skills.other.cloud': '<strong>Vercel, Railway</strong>',
+    'skills.other.cloud': '<strong>Vercel, Railway, Supabase</strong>',
     'skills.other.bash': '<strong>Bash</strong>',
 
     // Contact
@@ -111,15 +110,14 @@ export const ui = {
 
     // About
     'about.title': 'Chi sono',
-    'about.p1': "Sono uno studente di informatica con una forte passione per l'automazione, l'intelligenza artificiale e la cybersecurity.",
-    'about.p2': 'Oggi collaboro con piccole e medie imprese aiutandole a sviluppare siti web, grafiche e fornendo consulenza per comprendere le loro reali necessità.',
+    'about.p1': "Mi piace sviluppare software che risolve problemi o automatizza cose noiose. Trovo anche interessanti la cybersecurity e l'intelligenza artificiale, cercando sempre di collegarle a quello che faccio.",
+    'about.p2': 'Aiuto a sviluppare siti web e software, oltre a fornire consulenza per capire cosa vogliono davvero i clienti.',
     'about.cta': 'Pensi sia il tuo caso? Parliamone!',
 
     // Skills
     'skills.title': 'Competenze',
     'skills.languages.title': 'Linguaggi',
-    'skills.languages.python': '<strong>Python</strong> (Flask, BS4, Telegram API)',
-    'skills.languages.javascript': '<strong>JavaScript</strong>',
+    'skills.languages.python': '<strong>Python</strong>',
     'skills.languages.java': '<strong>Java</strong>',
     'skills.languages.rust': '<strong>Rust</strong> (con Tauri per GUI)',
     'skills.os.title': 'Sistemi Operativi',
@@ -127,7 +125,7 @@ export const ui = {
     'skills.os.windows': '<strong>Windows</strong> (Windows Server 2022)',
     'skills.other.title': 'Altro',
     'skills.other.sql': '<strong>SQL</strong> (MySQL e SQLite)',
-    'skills.other.cloud': '<strong>Vercel, Railway</strong>',
+    'skills.other.cloud': '<strong>Vercel, Railway, Supabase</strong>',
     'skills.other.bash': '<strong>Bash</strong>',
 
     // Contact

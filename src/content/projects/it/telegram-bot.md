@@ -1,6 +1,6 @@
 ---
 title: "Bot Telegram e sito per circolari scolastiche"
-description: "Ho sviluppato un bot Python con BS4 e Telegram API per estrarre le circolari dal sito della scuola e inviarle agli studenti. Ho creato anche un sito Flask per mostrare circolari e sostituzioni con notifiche del browser."
+description: "Ho sviluppato un bot Python con BS4 e Telegram API per estrarre le circolari dal sito della scuola e inviarle agli studenti. Ho creato anche un sito Flask per mostrare circolari e sostituzioni con notifiche del browser. Attualmente disattivato per motivi burocratici."
 tags: ["Python", "Flask", "BS4", "Telegram API"]
 lottieIcon: "/lottie/projects/telegram_logo.lottie"
 span: "2"
