@@ -15,7 +15,7 @@ const { title, description, publishDate, tags } = post.data;
 // Get the slug without the language prefix
 const slug = post.slug.replace(`${lang}/`, '');
 
-const formattedDate = new Intl.DateTimeFormat(lang === 'it' ? 'it-IT' : 'en-US', {
+const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
@@ -23,7 +23,7 @@ const formattedDate = new Intl.DateTimeFormat(lang === 'it' ? 'it-IT' : 'en-US',
 ---
 
 <article class="blog-card">
-  <a href={`/${lang}/blog/${slug}`} class="block">
+  <a href={`/blog/${slug}`} class="block">
     <h3 class="blog-card-title">{title}</h3>
     <p class="blog-card-date">{formattedDate}</p>
     <p class="blog-card-desc">{description}</p>

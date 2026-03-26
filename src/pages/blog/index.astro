@@ -1,19 +1,15 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import BlogPostCard from '@/components/BlogPostCard.astro';
-import { useTranslations, type Lang } from '@/i18n';
+import { useTranslations } from '@/i18n';
 import { getCollection } from 'astro:content';
 
-export function getStaticPaths() {
-  return [{ params: { lang: 'en' } }];
-}
-
-const { lang } = Astro.params as { lang: Lang };
+const lang = 'en';
 const t = useTranslations(lang);
 
-// Get blog posts for current language, excluding drafts
-const allPosts = await getCollection('blog', ({ id, data }) => {
-  return id.startsWith(`${lang}/`) && !data.draft;
+// Get all blog posts, excluding drafts
+const allPosts = await getCollection('blog', ({ data }) => {
+  return !data.draft;
 });
 
 // Sort by publish date (newest first)
@@ -39,7 +35,7 @@ const posts = allPosts.sort(
       ) : (
         <div class="no-posts">
           <p>{t('blog.noPosts')}</p>
-          <a href={`/${lang}/`} class="btn">{t('blog.back')}</a>
+          <a href="/" class="btn">{t('blog.back')}</a>
         </div>
       )}
     </div>
