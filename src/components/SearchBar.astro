@@ -142,10 +142,13 @@ const t = useTranslations(lang);
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 8px;
+    padding: 8px 12px;
     color: var(--primary-color);
     font-size: 1.1rem;
-    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
   }
 
   .search-toggle:hover {
@@ -159,10 +162,10 @@ const t = useTranslations(lang);
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding-top: 10vh;
+    padding-top: 12vh;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
   }
 
   .search-modal.active {
@@ -173,81 +176,104 @@ const t = useTranslations(lang);
   .search-modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+    background: rgba(30, 25, 20, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .search-modal-content {
     position: relative;
     width: 100%;
-    max-width: 600px;
+    max-width: 640px;
     margin: 0 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    background: var(--primary-bg);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.12),
+      0 2px 8px rgba(0, 0, 0, 0.06);
     overflow: hidden;
+    animation: search-slide-in 0.25s ease-out;
+  }
+
+  @keyframes search-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   .search-close {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: transparent;
+    top: 16px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.06);
     border: none;
+    border-radius: 8px;
     cursor: pointer;
-    padding: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--text-color);
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     z-index: 10;
-    transition: color 0.3s ease;
+    transition: background 0.2s ease, color 0.2s ease;
   }
 
   .search-close:hover {
+    background: rgba(0, 0, 0, 0.1);
     color: var(--primary-color);
   }
 
   /* Pagefind UI Customization */
   #search-container {
-    padding: 20px;
+    padding: 24px;
   }
 
   :global(.pagefind-ui) {
     --pagefind-ui-scale: 1;
-    --pagefind-ui-primary: var(--button-bg);
+    --pagefind-ui-primary: var(--accent-color);
     --pagefind-ui-text: var(--primary-color);
-    --pagefind-ui-background: white;
-    --pagefind-ui-border: #e5e5e5;
-    --pagefind-ui-tag: var(--secondary-bg);
-    --pagefind-ui-border-width: 1px;
-    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-background: transparent;
+    --pagefind-ui-border: transparent;
+    --pagefind-ui-tag: rgba(9, 167, 224, 0.1);
+    --pagefind-ui-border-width: 0px;
+    --pagefind-ui-border-radius: 12px;
     --pagefind-ui-font: 'Roboto', sans-serif;
   }
 
   :global(.pagefind-ui__search-input) {
-    font-size: 1.1rem !important;
-    padding: 12px 16px !important;
-    border: 2px solid #e0e0e0 !important;
-    border-radius: 8px !important;
+    font-size: 1.05rem !important;
+    padding: 14px 18px 14px 44px !important;
+    border: none !important;
+    border-radius: 12px !important;
     outline: none !important;
     box-shadow: none !important;
     font-family: 'Roboto', sans-serif !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    background: var(--pagefind-ui-background, #fff) !important;
-    color: var(--text-color) !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: var(--primary-color) !important;
     -webkit-appearance: none !important;
     appearance: none !important;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    transition: background 0.2s ease, box-shadow 0.2s ease !important;
   }
 
   :global(.pagefind-ui__search-input:focus) {
-    border-color: var(--button-bg) !important;
-    box-shadow: 0 0 0 3px rgba(9, 167, 224, 0.12) !important;
+    background: rgba(0, 0, 0, 0.07) !important;
+    box-shadow: 0 0 0 2px rgba(9, 167, 224, 0.25) !important;
     outline: none !important;
   }
 
   :global(.pagefind-ui__search-input::placeholder) {
-    color: #aaa !important;
+    color: #999 !important;
+    font-weight: 400 !important;
   }
 
   :global(.pagefind-ui__form) {
@@ -255,12 +281,25 @@ const t = useTranslations(lang);
   }
 
   :global(.pagefind-ui__form::before) {
-    display: none !important;
+    content: '' !important;
+    display: block !important;
+    position: absolute !important;
+    left: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23999' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'/%3E%3C/svg%3E") !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    z-index: 1 !important;
+    opacity: 0.6 !important;
   }
 
   :global(.pagefind-ui__drawer) {
     border: none !important;
     box-shadow: none !important;
+    margin-top: 8px !important;
   }
 
   :global(.pagefind-ui__search-input:focus-visible) {
@@ -269,18 +308,66 @@ const t = useTranslations(lang);
 
   :global(.pagefind-ui__search-clear) {
     border: none !important;
-    background: none !important;
+    background: rgba(0, 0, 0, 0.06) !important;
     color: var(--text-color) !important;
     cursor: pointer !important;
+    border-radius: 8px !important;
+    width: 28px !important;
+    height: 28px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.2s ease !important;
+    right: 8px !important;
+  }
+
+  :global(.pagefind-ui__search-clear:hover) {
+    background: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  :global(.pagefind-ui__result) {
+    border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+    padding: 16px 0 !important;
   }
 
   :global(.pagefind-ui__result-link) {
-    color: var(--button-bg) !important;
+    color: var(--primary-color) !important;
     font-weight: 600 !important;
+    font-size: 1rem !important;
+    transition: color 0.2s ease !important;
+  }
+
+  :global(.pagefind-ui__result-link:hover) {
+    color: var(--accent-color) !important;
   }
 
   :global(.pagefind-ui__result-excerpt) {
     color: var(--text-color) !important;
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+    opacity: 0.85 !important;
+  }
+
+  :global(.pagefind-ui__message) {
+    font-size: 0.9rem !important;
+    color: var(--text-color) !important;
+    opacity: 0.7 !important;
+    padding: 8px 0 !important;
+  }
+
+  :global(.pagefind-ui__button) {
+    background: rgba(9, 167, 224, 0.1) !important;
+    color: var(--accent-color) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    padding: 10px 20px !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease !important;
+  }
+
+  :global(.pagefind-ui__button:hover) {
+    background: rgba(9, 167, 224, 0.18) !important;
   }
 </style>
 
