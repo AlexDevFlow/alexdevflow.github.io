@@ -21,7 +21,9 @@ const t = useTranslations(lang);
   showFooter={false}
 >
   <div class="home-container">
-    <LanguageSwitcher currentLang={lang} />
+    <div class="lang-switch-wrapper">
+      <LanguageSwitcher currentLang={lang} />
+    </div>
 
     <header class="home-header">
       <h1 class="home-title">Alex</h1>
@@ -50,6 +52,7 @@ const t = useTranslations(lang);
 
 <style>
   .home-container {
+    position: relative;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -57,6 +60,12 @@ const t = useTranslations(lang);
     justify-content: center;
     padding: 40px 20px;
     background-color: var(--primary-bg);
+  }
+
+  .lang-switch-wrapper {
+    position: absolute;
+    top: 20px;
+    right: 20px;
   }
 
   .home-header {
