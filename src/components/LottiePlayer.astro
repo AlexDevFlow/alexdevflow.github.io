@@ -1,0 +1,50 @@
+---
+interface Props {
+  src: string;
+  class?: string;
+  autoplay?: boolean;
+  loop?: boolean;
+  speed?: number;
+}
+
+const {
+  src,
+  class: className = '',
+  autoplay = true,
+  loop = true,
+  speed = 1
+} = Astro.props;
+---
+
+<dotlottie-player
+  src={src}
+  class={className}
+  autoplay={autoplay}
+  loop={loop}
+  speed={speed}
+  data-lottie-lazy
+></dotlottie-player>
+
+<script>
+  // Lazy loading for Lottie players
+  const lottieObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const player = entry.target as HTMLElement;
+        // Player is already configured, just let it play
+        player.removeAttribute('data-lottie-lazy');
+        lottieObserver.unobserve(player);
+      }
+    });
+  }, {
+    rootMargin: '100px',
+    threshold: 0.1
+  });
+
+  document.querySelectorAll('[data-lottie-lazy]').forEach((el) => {
+    lottieObserver.observe(el);
+  });
+</script>
+
+<!-- Load dotlottie-player library -->
+<script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>

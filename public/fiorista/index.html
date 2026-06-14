@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiore Mio — Atelier Floreale Milano | Bouquet e Composizioni Artigianali</title>
+  <meta name="description" content="Fiore Mio è l'atelier floreale di Milano che crea composizioni artigianali uniche per ogni occasione. Consegna a domicilio in giornata.">
+  <meta property="og:title" content="Fiore Mio — Atelier Floreale Milano">
+  <meta property="og:description" content="Bouquet e composizioni floreali artigianali. Consegna a Milano in giornata.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=1200&q=80">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --crema: #FDF8F4;
+      --verde: #4A5D4E;
+      --verde-scuro: #3D4F41;
+      --rosa: #C4A08A;
+      --bianco: #FEFCFA;
+      --testo: #2C2C2C;
+      --testo-light: #7A7A7A;
+      --oro: #B8956A;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body: 'Lato', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 400;
+      color: var(--testo);
+      background-color: var(--crema);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 20px 0;
+      background-color: rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background-color 0.4s ease, box-shadow 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
+    }
+
+    .navbar.scrolled {
+      background-color: rgba(253, 248, 244, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 20px rgba(0, 0, 0, 0.06);
+      padding: 12px 0;
+    }
+
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 1.8rem;
+      color: #fff;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      transition: color 0.4s ease;
+    }
+
+    .nav-subtitle {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.75);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.4s ease;
+    }
+
+    .navbar.scrolled .nav-logo { color: var(--testo); }
+    .navbar.scrolled .nav-subtitle { color: var(--testo-light); }
+
+    /* Navbar quando il menu mobile è aperto */
+    .navbar.menu-open {
+      background-color: var(--crema);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+    .navbar.menu-open .nav-logo { color: var(--testo); }
+    .navbar.menu-open .nav-subtitle { color: var(--testo-light); }
+
+    .nav-menu {
+      display: none;
+      gap: 36px;
+    }
+
+    .nav-menu a {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.9);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background-color: var(--oro);
+      transition: width 0.3s ease;
+    }
+
+    .nav-menu a:hover::after { width: 100%; }
+
+    .navbar.scrolled .nav-menu a { color: var(--testo); }
+    .navbar.scrolled .nav-menu a:hover { color: var(--verde); }
+
+    /* Hamburger */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 1001;
+      background: none;
+      border: none;
+      padding: 8px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 1.5px;
+      background-color: #fff;
+      transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.4s ease;
+    }
+
+    .navbar.scrolled .hamburger span { background-color: var(--testo); }
+
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(6.5px) rotate(45deg);
+    }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-6.5px) rotate(-45deg);
+    }
+    .hamburger.active span { background-color: var(--testo); }
+
+    /* Mobile overlay */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--crema);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 999;
+    }
+
+    .mobile-menu.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .mobile-menu a {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--testo);
+      letter-spacing: 0.03em;
+      transition: color 0.3s ease;
+    }
+
+    .mobile-menu a:hover { color: var(--verde); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.35) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 24px;
+      max-width: 800px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 2.5rem;
+      color: #fff;
+      letter-spacing: 0.03em;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .btn-hero {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      border: 1px solid #fff;
+      background: transparent;
+      padding: 16px 40px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-hero:hover {
+      background-color: #fff;
+      color: var(--verde);
+    }
+
+    .hero-chevron {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      animation: chevronBounce 2s ease-in-out infinite;
+    }
+
+    .hero-chevron svg {
+      width: 28px;
+      height: 28px;
+      stroke: rgba(255, 255, 255, 0.7);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    @keyframes chevronBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ===== CITAZIONE ===== */
+    .quote-section {
+      background-color: var(--crema);
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .quote-text {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.6rem;
+      color: var(--testo);
+      max-width: 700px;
+      margin: 0 auto 30px;
+      line-height: 1.5;
+    }
+
+    .quote-line {
+      width: 60px;
+      height: 1px;
+      background-color: var(--oro);
+      margin: 0 auto 20px;
+    }
+
+    .quote-author {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: var(--testo-light);
+    }
+
+    /* ===== CREAZIONI ===== */
+    .creazioni {
+      background-color: var(--bianco);
+      padding: 80px 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 2.2rem;
+      color: var(--testo);
+      margin-bottom: 12px;
+    }
+
+    .section-subtitle {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 1rem;
+      color: var(--testo-light);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .product-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .product-img-wrapper {
+      overflow: hidden;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .product-img-wrapper img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .product-card:hover .product-img-wrapper img {
+      transform: scale(1.03);
+    }
+
+    .product-name {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: var(--testo);
+      margin-bottom: 8px;
+    }
+
+    .product-desc {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: var(--testo-light);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .product-price {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--verde);
+      margin-bottom: 16px;
+    }
+
+    .btn-whatsapp {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+      background-color: var(--verde);
+      border: none;
+      border-radius: 30px;
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-whatsapp:hover { background-color: var(--verde-scuro); }
+
+    /* ===== PARALLAX BANNER ===== */
+    .parallax-banner {
+      position: relative;
+      width: 100%;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: url('https://images.unsplash.com/photo-1470509037663-253afd7f0f51?w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .parallax-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    .parallax-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 80px 24px;
+      max-width: 700px;
+    }
+
+    .parallax-text {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.6rem;
+      color: #fff;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      background: transparent;
+      padding: 14px 32px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .btn-ghost:hover {
+      background-color: rgba(255, 255, 255, 0.12);
+      border-color: #fff;
+    }
+
+    /* ===== OCCASIONI ===== */
+    .occasioni {
+      background-color: var(--bianco);
+      padding: 80px 24px;
+    }
+
+    .occasioni-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .occasione-card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 280px;
+      display: flex;
+      align-items: flex-end;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .occasione-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .occasione-card img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .occasione-card:hover img {
+      transform: scale(1.04);
+    }
+
+    .occasione-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.05) 60%);
+      transition: background 0.4s ease;
+    }
+
+    .occasione-card:hover .occasione-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%);
+    }
+
+    .occasione-content {
+      position: relative;
+      z-index: 2;
+      padding: 32px 28px;
+      width: 100%;
+    }
+
+    .occasione-tag {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--oro);
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(4px);
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .occasione-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.6rem;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .occasione-desc {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.5;
+      max-width: 400px;
+    }
+
+    /* ===== CHI SIAMO ===== */
+    .chi-siamo {
+      background-color: var(--crema);
+      padding: 80px 24px;
+    }
+
+    .chi-siamo-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: center;
+    }
+
+    .chi-siamo-img {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 12px;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+    }
+
+    .chi-siamo-text {
+      max-width: 550px;
+    }
+
+    .chi-siamo-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 2.2rem;
+      color: var(--testo);
+      margin-bottom: 24px;
+    }
+
+    .chi-siamo-text p {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 1rem;
+      color: var(--testo);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .chi-siamo-text .btn-whatsapp {
+      margin-top: 12px;
+    }
+
+    /* ===== RECENSIONI ===== */
+    .recensioni {
+      background-color: var(--crema);
+      padding: 80px 24px;
+    }
+
+    .recensioni-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .review-card {
+      background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      padding: 32px 28px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.03);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .review-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .review-stars {
+      color: var(--oro);
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
+    .review-text {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--testo);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .review-name {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--testo);
+      margin-bottom: 4px;
+    }
+
+    .review-verified {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.75rem;
+      color: var(--testo-light);
+    }
+
+    /* ===== CTA FINALE ===== */
+    .cta-finale {
+      background-color: var(--verde);
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 2.5rem;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .cta-subtitle {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .btn-cta-primary {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--verde);
+      background-color: #fff;
+      border: none;
+      border-radius: 30px;
+      padding: 16px 40px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-cta-primary:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .btn-cta-secondary {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 30px;
+      padding: 16px 40px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .btn-cta-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: #fff;
+    }
+
+    .cta-info {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.8;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background-color: var(--testo);
+      padding: 60px 24px 30px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto 40px;
+    }
+
+    .footer-brand .footer-logo {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 1.6rem;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 16px;
+      font-size: 0.85rem;
+    }
+
+    .footer-social a {
+      color: rgba(255, 255, 255, 0.7);
+      transition: color 0.3s ease;
+    }
+
+    .footer-social a:hover { color: #fff; }
+
+    .footer h4 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .footer-links a {
+      display: block;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 12px;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover { color: #fff; }
+
+    .footer-contact p {
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .footer-divider {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 20px auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .footer-bottom p {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* ===== MEDIA QUERIES ===== */
+
+    /* Tablet */
+    @media (min-width: 768px) {
+      .hero-title { font-size: 3.5rem; }
+      .hero-subtitle { font-size: 1.1rem; }
+
+      .quote-section { padding: 100px 24px; }
+      .quote-text { font-size: 2rem; }
+
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+
+      .occasioni-grid { grid-template-columns: repeat(2, 1fr); }
+      .occasione-card { min-height: 320px; }
+
+      .recensioni-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .cta-buttons { flex-direction: row; justify-content: center; }
+
+      .footer-grid { grid-template-columns: repeat(3, 1fr); }
+      .footer-bottom { flex-direction: row; justify-content: space-between; }
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+      .hamburger { display: none; }
+      .nav-menu { display: flex; }
+
+      .navbar { padding: 24px 0; }
+      .navbar.scrolled { padding: 14px 0; }
+      .nav-logo { font-size: 2rem; }
+
+      .hero-title { font-size: 4.5rem; }
+
+      .quote-section { padding: 120px 24px; }
+      .quote-text { font-size: 2.2rem; }
+
+      .creazioni { padding: 100px 24px; }
+      .section-title { font-size: 2.5rem; }
+      .products-grid { grid-template-columns: repeat(3, 1fr); gap: 36px; }
+
+      .parallax-banner { background-attachment: fixed; }
+      .parallax-text { font-size: 2rem; }
+
+      .occasioni { padding: 100px 24px; }
+      .occasione-card { min-height: 360px; }
+      .occasione-title { font-size: 1.8rem; }
+
+      .chi-siamo { padding: 100px 24px; }
+      .chi-siamo-wrapper { flex-direction: row; gap: 60px; align-items: flex-start; }
+      .chi-siamo-img { max-width: 450px; }
+
+      .recensioni { padding: 100px 24px; }
+
+      .cta-finale { padding: 100px 24px; }
+      .cta-title { font-size: 3rem; }
+
+      .occasione-title { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#home" class="nav-brand">
+        <span class="nav-logo">Fiore Mio</span>
+        <span class="nav-subtitle">Atelier Floreale &middot; Milano</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#creazioni">Creazioni</a></li>
+        <li><a href="#chi-siamo">Chi Siamo</a></li>
+        <li><a href="#occasioni">Occasioni</a></li>
+        <li><a href="#contatti">Contatti</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Menu di navigazione">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#home">Home</a>
+    <a href="#creazioni">Creazioni</a>
+    <a href="#chi-siamo">Chi Siamo</a>
+    <a href="#occasioni">Occasioni</a>
+    <a href="#contatti">Contatti</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <img class="hero-bg" src="https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=1920&q=80" alt="Bouquet elegante di fiori con luce calda">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">L'arte di dire tutto<br>con un fiore</h1>
+      <p class="hero-subtitle">Composizioni floreali artigianali per ogni momento della vita</p>
+      <a href="#creazioni" class="btn-hero">Scopri le Creazioni</a>
+    </div>
+    <div class="hero-chevron">
+      <svg viewBox="0 0 24 24">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
+
+  <!-- CITAZIONE -->
+  <section class="quote-section">
+    <p class="quote-text">&ldquo;Ogni bouquet &egrave; un racconto. Ogni petalo, una parola scelta con cura.&rdquo;</p>
+    <div class="quote-line"></div>
+    <p class="quote-author">&mdash; Giulia, fondatrice di Fiore Mio</p>
+  </section>
+
+  <!-- CREAZIONI -->
+  <section class="creazioni" id="creazioni">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Le Nostre Creazioni</h2>
+        <p class="section-subtitle">Composizioni pensate per emozionare</p>
+      </div>
+      <div class="products-grid">
+
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&q=80"
+                 alt="Tramonto Rosa — Bouquet di rose e peonie rosa"
+                 loading="lazy" decoding="async">
+          </div>
+          <h3 class="product-name">Tramonto Rosa</h3>
+          <p class="product-desc">Rose inglesi, peonie e lisianthus in sfumature cipria</p>
+          <p class="product-price">da &euro;45</p>
+          <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%20Giulia!%20Vorrei%20ordinare%20il%20bouquet%20Tramonto%20Rosa" class="btn-whatsapp" target="_blank" rel="noopener">Ordina su WhatsApp</a>
+        </div>
+
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?w=600&q=80"
+                 alt="Giardino Segreto — Wildflowers colorati"
+                 loading="lazy" decoding="async">
+          </div>
+          <h3 class="product-name">Giardino Segreto</h3>
+          <p class="product-desc">Fiori di campo, margherite e lavanda fresca</p>
+          <p class="product-price">da &euro;35</p>
+          <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%20Giulia!%20Vorrei%20ordinare%20il%20bouquet%20Giardino%20Segreto" class="btn-whatsapp" target="_blank" rel="noopener">Ordina su WhatsApp</a>
+        </div>
+
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80"
+                 alt="Eleganza Bianca — Bouquet total white"
+                 loading="lazy" decoding="async">
+          </div>
+          <h3 class="product-name">Eleganza Bianca</h3>
+          <p class="product-desc">Ortensie bianche, rose e gypsophila</p>
+          <p class="product-price">da &euro;55</p>
+          <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%20Giulia!%20Vorrei%20ordinare%20il%20bouquet%20Eleganza%20Bianca" class="btn-whatsapp" target="_blank" rel="noopener">Ordina su WhatsApp</a>
+        </div>
+
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=600&q=80"
+                 alt="Sole d'Autunno — Composizione calda autunnale"
+                 loading="lazy" decoding="async">
+          </div>
+          <h3 class="product-name">Sole d'Autunno</h3>
+          <p class="product-desc">Dalie, crisantemi e bacche in toni caldi</p>
+          <p class="product-price">da &euro;40</p>
+          <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%20Giulia!%20Vorrei%20ordinare%20il%20bouquet%20Sole%20d'Autunno" class="btn-whatsapp" target="_blank" rel="noopener">Ordina su WhatsApp</a>
+        </div>
+
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=600&q=80"
+                 alt="Romantico — Rose rosse classiche"
+                 loading="lazy" decoding="async">
+          </div>
+          <h3 class="product-name">Romantico</h3>
+          <p class="product-desc">Rose rosse a stelo lungo con eucalipto</p>
+          <p class="product-price">da &euro;50</p>
+          <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%20Giulia!%20Vorrei%20ordinare%20il%20bouquet%20Romantico" class="btn-whatsapp" target="_blank" rel="noopener">Ordina su WhatsApp</a>
+        </div>
+
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=600&q=80"
+                 alt="Primavera Eterna — Bouquet fresco e colorato"
+                 loading="lazy" decoding="async">
+          </div>
+          <h3 class="product-name">Primavera Eterna</h3>
+          <p class="product-desc">Tulipani, ranuncoli e anemoni di stagione</p>
+          <p class="product-price">da &euro;38</p>
+          <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%20Giulia!%20Vorrei%20ordinare%20il%20bouquet%20Primavera%20Eterna" class="btn-whatsapp" target="_blank" rel="noopener">Ordina su WhatsApp</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PARALLAX BANNER -->
+  <section class="parallax-banner">
+    <div class="parallax-overlay"></div>
+    <div class="parallax-content">
+      <p class="parallax-text">Ogni fiore viene scelto a mano ogni mattina ai mercati di Milano</p>
+      <a href="#chi-siamo" class="btn-ghost">La Nostra Storia &rarr;</a>
+    </div>
+  </section>
+
+  <!-- OCCASIONI -->
+  <section class="occasioni" id="occasioni">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Per Ogni Occasione</h2>
+        <p class="section-subtitle">Lascia che i fiori parlino per te</p>
+      </div>
+      <div class="occasioni-grid">
+
+        <div class="occasione-card">
+          <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&q=80"
+               alt="Fiori per compleanni" loading="lazy" decoding="async">
+          <div class="occasione-overlay"></div>
+          <div class="occasione-content">
+            <span class="occasione-tag">Celebrare</span>
+            <h3 class="occasione-title">Compleanni</h3>
+            <p class="occasione-desc">Sorprendi chi ami con un bouquet pensato apposta per lei o per lui</p>
+          </div>
+        </div>
+
+        <div class="occasione-card">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80"
+               alt="Fiori per matrimoni" loading="lazy" decoding="async">
+          <div class="occasione-overlay"></div>
+          <div class="occasione-content">
+            <span class="occasione-tag">Amore</span>
+            <h3 class="occasione-title">Matrimoni</h3>
+            <p class="occasione-desc">Dall'altare al centrotavola: progettiamo insieme il giorno pi&ugrave; bello</p>
+          </div>
+        </div>
+
+        <div class="occasione-card">
+          <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&q=80"
+               alt="Allestimenti floreali per eventi" loading="lazy" decoding="async">
+          <div class="occasione-overlay"></div>
+          <div class="occasione-content">
+            <span class="occasione-tag">Business</span>
+            <h3 class="occasione-title">Eventi &amp; Corporate</h3>
+            <p class="occasione-desc">Allestimenti floreali per uffici, inaugurazioni e eventi aziendali</p>
+          </div>
+        </div>
+
+        <div class="occasione-card">
+          <img src="https://images.unsplash.com/photo-1549488344-cbb6c34cf08b?w=800&q=80"
+               alt="Fiori per ogni momento" loading="lazy" decoding="async">
+          <div class="occasione-overlay"></div>
+          <div class="occasione-content">
+            <span class="occasione-tag">Emozione</span>
+            <h3 class="occasione-title">Just Because</h3>
+            <p class="occasione-desc">Non serve un'occasione speciale per regalare un sorriso</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CHI SIAMO -->
+  <section class="chi-siamo" id="chi-siamo">
+    <div class="chi-siamo-wrapper">
+      <img class="chi-siamo-img"
+           src="https://images.unsplash.com/photo-1445633743309-b60418bedbf2?w=800&q=80"
+           alt="Mani che compongono un bouquet artigianale"
+           loading="lazy" decoding="async">
+      <div class="chi-siamo-text">
+        <h2 class="chi-siamo-title">Ciao, sono Giulia</h2>
+        <p>Da oltre 10 anni trasformo i fiori pi&ugrave; belli in emozioni da regalare. Ogni composizione nasce dalla passione, dalla stagionalit&agrave; e da un ascolto attento dei desideri di chi si affida a me. Nel mio atelier in zona Navigli, ogni mattina &egrave; una nuova avventura tra colori e profumi.</p>
+        <p>Credo che un bouquet debba raccontare una storia &mdash; la vostra. Per questo non lavoro con formule preconfezionate, ma creo ogni volta qualcosa di unico.</p>
+        <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%20Giulia!%20Vorrei%20saperne%20di%20pi%C3%B9" class="btn-whatsapp" target="_blank" rel="noopener">Scrivimi su WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECENSIONI -->
+  <section class="recensioni">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Cosa Dicono di Noi</h2>
+      </div>
+      <div class="recensioni-grid">
+
+        <div class="review-card">
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">&ldquo;Giulia ha curato i fiori del mio matrimonio ed &egrave; stato tutto perfetto. Ogni dettaglio era esattamente come l'avevo immaginato, anzi meglio!&rdquo;</p>
+          <p class="review-name">Francesca M.</p>
+          <p class="review-verified">Verificata su Google</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">&ldquo;Ordino da Fiore Mio ogni volta che devo fare un regalo speciale. La qualit&agrave; e la freschezza dei fiori sono incomparabili.&rdquo;</p>
+          <p class="review-name">Marco L.</p>
+          <p class="review-verified">Verificata su Google</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">&ldquo;Il bouquet per il compleanno di mia madre era stupendo. Giulia ha saputo interpretare perfettamente i miei gusti. Consigliatissima!&rdquo;</p>
+          <p class="review-name">Sara T.</p>
+          <p class="review-verified">Verificata su Google</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINALE -->
+  <section class="cta-finale" id="contatti">
+    <h2 class="cta-title">Regala un'Emozione</h2>
+    <p class="cta-subtitle">Consegna a Milano e hinterland &middot; Ordini entro le 14:00 per consegna in giornata</p>
+    <div class="cta-buttons">
+      <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%20Giulia!%20Vorrei%20ordinare%20un%20bouquet" class="btn-cta-primary" target="_blank" rel="noopener">Ordina su WhatsApp</a>
+      <a href="tel:+3902XXXXXXX" class="btn-cta-secondary">Chiama Ora</a>
+    </div>
+    <p class="cta-info">📍 Via Naviglio Grande 42, Milano &middot; ☎ +39 02 XXX XXXX</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <p class="footer-logo">Fiore Mio</p>
+        <p>Composizioni floreali artigianali create con passione nel cuore di Milano.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">IG</a>
+          <span>&middot;</span>
+          <a href="#" aria-label="Facebook">FB</a>
+          <span>&middot;</span>
+          <a href="#" aria-label="Pinterest">PIN</a>
+        </div>
+      </div>
+      <div>
+        <h4>Link Utili</h4>
+        <div class="footer-links">
+          <a href="#home">Home</a>
+          <a href="#creazioni">Creazioni</a>
+          <a href="#chi-siamo">Chi Siamo</a>
+          <a href="#contatti">Contatti</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+      <div>
+        <h4>Contatti</h4>
+        <div class="footer-contact">
+          <p>📍 Via Naviglio Grande 42, Milano</p>
+          <p>☎ +39 02 XXX XXXX</p>
+          <p>✉ info@fioremio.it</p>
+          <p>Lun &ndash; Sab: 8:00 &ndash; 19:00</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Fiore Mio &mdash; Atelier Floreale Milano. Tutti i diritti riservati.</p>
+      <p>Fatto con ❤️ e 🌿</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect via IntersectionObserver
+    (function() {
+      var navbar = document.getElementById('navbar');
+      var hero = document.getElementById('home');
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            navbar.classList.remove('scrolled');
+          } else {
+            navbar.classList.add('scrolled');
+          }
+        });
+      }, { threshold: 0.05 });
+
+      observer.observe(hero);
+    })();
+
+    // Hamburger menu toggle
+    (function() {
+      var hamburger = document.getElementById('hamburger');
+      var mobileMenu = document.getElementById('mobileMenu');
+      var navbar = document.getElementById('navbar');
+      var menuLinks = mobileMenu.querySelectorAll('a');
+
+      function openMenu() {
+        hamburger.classList.add('active');
+        mobileMenu.classList.add('active');
+        navbar.classList.add('menu-open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        navbar.classList.remove('menu-open');
+        document.body.style.overflow = '';
+      }
+
+      hamburger.addEventListener('click', function() {
+        if (mobileMenu.classList.contains('active')) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      menuLinks.forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+    })();
+
+    // Fade-in on scroll via IntersectionObserver
+    (function() {
+      var elements = document.querySelectorAll('.product-card, .occasione-card, .review-card');
+
+      var fadeObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            fadeObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      elements.forEach(function(el) {
+        fadeObserver.observe(el);
+      });
+    })();
+  </script>
+
+</body>
+</html>

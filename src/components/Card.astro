@@ -1,0 +1,59 @@
+---
+import LottiePlayer from './LottiePlayer.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  lottieIcon?: string;
+  class?: string;
+}
+
+const { href, title, lottieIcon, class: className } = Astro.props;
+---
+
+<a href={href} class:list={['home-card', className]}>
+  {lottieIcon && (
+    <div class="card-icon">
+      <LottiePlayer src={lottieIcon} class="w-24 h-24" />
+    </div>
+  )}
+  <h2 class="card-title">{title}</h2>
+</a>
+
+<style>
+  .home-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 200px;
+  }
+
+  .home-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .home-card:hover .card-icon {
+    transform: scale(1.1);
+  }
+
+  .card-icon {
+    margin-bottom: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-align: center;
+  }
+</style>

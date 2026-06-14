@@ -1,0 +1,115 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Card from '@/components/Card.astro';
+import ParticleCanvas from '@/components/ParticleCanvas.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { useTranslations, languages, type Lang } from '@/i18n';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('meta.title')}
+  lang={lang}
+  headerVariant="minimal"
+  showFooter={false}
+>
+  <div class="home-container">
+    <ParticleCanvas text="Alex" />
+
+    <div class="lang-switch-wrapper">
+      <LanguageSwitcher currentLang={lang} />
+    </div>
+
+    <header class="home-header">
+      <h1 class="home-title">Alex</h1>
+      <p class="home-subtitle">{t('home.subtitle')}</p>
+    </header>
+
+    <div class="cards-container">
+      <Card
+        href={`/${lang}/portfolio`}
+        title={t('home.cardPortfolio')}
+        lottieIcon="/lottie/portfolio.lottie"
+      />
+      <Card
+        href="/blog"
+        title={t('home.cardBlog')}
+        lottieIcon="/lottie/blog.lottie"
+      />
+      <Card
+        href={`/${lang}/privacy-security`}
+        title={t('home.cardPrivacy')}
+        lottieIcon="/lottie/security.lottie"
+      />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .home-container {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: var(--primary-bg);
+    overflow: hidden;
+  }
+
+  .lang-switch-wrapper {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+  }
+
+  .home-header {
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .home-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(3rem, 10vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: transparent;
+    margin-bottom: 1.25rem;
+  }
+
+  .home-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    position: relative;
+    z-index: 1;
+  }
+
+  .cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 900px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 640px) {
+    .cards-container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
