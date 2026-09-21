@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>LLM Mac Test — AlexDevFlow</title>
+<meta name="description" content="Suite di test LLM in-browser (WebGPU/Metal) per valutare le prestazioni dei Mac su workflow reali. Tutto temporaneo, niente da installare.">
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F172A; --panel:#1E293B; --panel-2:#334155; --border:#334155;
+  --text:#F8FAFC; --muted:#94A3B8; --accent:#22C55E; --accent-dim:#16A34A;
+  --warn:#F59E0B; --err:#EF4444; --info:#38BDF8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Fira Sans',system-ui,sans-serif;font-size:16px;line-height:1.6;min-height:100vh;padding-bottom:76px}
+code,.mono{font-family:'Fira Code',ui-monospace,monospace}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 40px}
+header{display:flex;align-items:center;gap:14px;padding:8px 0 20px}
+header svg{flex-shrink:0}
+h1{font-family:'Fira Code',monospace;font-size:clamp(22px,4vw,32px);font-weight:600}
+.sub{color:var(--muted);font-size:15px}
+section{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+h2{font-family:'Fira Code',monospace;font-size:18px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+h2 svg{color:var(--accent)}
+h3{font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:15px}
+.kv dt{color:var(--muted)}
+.kv dd{font-family:'Fira Code',monospace;font-size:14px;overflow-wrap:anywhere}
+.badge{display:inline-block;font-family:'Fira Code',monospace;font-size:12px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);color:var(--muted);white-space:nowrap}
+.badge.ok{color:var(--accent);border-color:var(--accent-dim)}
+.badge.warn{color:var(--warn);border-color:var(--warn)}
+.badge.err{color:var(--err);border-color:var(--err)}
+.badge.info{color:var(--info);border-color:var(--info)}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s}
+.card:hover{border-color:var(--muted)}
+.card.active{border-color:var(--accent)}
+.card .name{font-weight:600;font-size:15px}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px}
+.card .note{font-size:13px;color:var(--muted);flex:1}
+.card .row{display:flex;gap:8px;margin-top:4px}
+button{font-family:'Fira Sans',sans-serif;font-size:14px;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--border);background:var(--panel-2);color:var(--text);cursor:pointer;transition:background .2s,border-color .2s,color .2s;min-height:40px}
+button:hover:not(:disabled){border-color:var(--muted)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent-dim);border-color:var(--accent-dim)}
+button.primary:hover:not(:disabled){background:var(--accent)}
+button.danger{color:var(--err)}
+button.danger:hover:not(:disabled){border-color:var(--err)}
+button.small{padding:5px 10px;min-height:32px;font-size:13px}
+input[type=text]{background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'Fira Sans',sans-serif;font-size:15px;padding:9px 12px;min-height:40px}
+input[type=text]:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.progress{margin-top:14px;display:none}
+.progress.show{display:block}
+.bar{height:10px;background:var(--bg);border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.bar i{display:block;height:100%;width:0%;background:var(--accent);transition:width .3s}
+.progress p{font-family:'Fira Code',monospace;font-size:13px;color:var(--muted);margin-top:6px;overflow-wrap:anywhere}
+textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Fira Sans',sans-serif;font-size:16px;padding:12px;resize:vertical;min-height:70px}
+textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;align-items:center}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);cursor:pointer;user-select:none}
+.toggle input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+.out{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;min-height:80px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;max-height:340px;overflow-y:auto}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{font-family:'Fira Code',monospace;font-size:13px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 10px}
+.chip b{color:var(--accent);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+th{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+td{font-family:'Fira Code',monospace;font-size:13px}
+.tablewrap{overflow-x:auto}
+.alert{border-radius:10px;padding:12px 14px;font-size:14px;margin-bottom:14px;display:none}
+.alert.show{display:block}
+.alert.err{background:rgba(239,68,68,.12);border:1px solid var(--err);color:#FCA5A5}
+.alert.warn{background:rgba(245,158,11,.1);border:1px solid var(--warn);color:#FCD34D}
+.alert code{color:var(--text)}
+.alert .row{margin-top:10px;display:flex;gap:8px}
+footer{color:var(--muted);font-size:13px;text-align:center;padding-top:10px}
+footer a{color:var(--info)}
+/* ── barra di stato fissa ── */
+#statusbar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--panel);border-top:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;font-size:14px}
+#statusbar .pulse{width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:pulse 1.2s ease-in-out infinite}
+#statusbar .pulse.busy{background:var(--warn)}
+#statusbar .pulse.err{background:var(--err);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+#status-phase{font-family:'Fira Code',monospace;font-weight:600;white-space:nowrap}
+#status-detail{color:var(--muted);font-family:'Fira Code',monospace;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+#status-clock{font-family:'Fira Code',monospace;font-size:13px;color:var(--muted);white-space:nowrap}
+/* ── log ── */
+#logbox{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;max-height:260px;overflow-y:auto;font-family:'Fira Code',monospace;font-size:12.5px;line-height:1.55}
+#logbox div{overflow-wrap:anywhere}
+#logbox .t{color:var(--muted)}
+#logbox .e{color:#FCA5A5}
+#logbox .w{color:#FCD34D}
+.testrow-run td{color:var(--warn)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+@media (max-width:640px){.grid{grid-template-columns:1fr}#status-detail{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>
+  <div>
+    <h1>LLM Mac Test</h1>
+    <p class="sub">Testa un Mac su workflow LLM reali, tutto nel browser (WebGPU → Metal). Apri in <b>incognito</b>: alla chiusura della tab non resta nulla.</p>
+  </div>
+</header>
+
+<div id="alert" class="alert err" role="alert">
+  <span id="alert-msg"></span>
+  <div class="row"><button class="small" id="btn-copy-err">Copia dettagli errore</button></div>
+</div>
+<div id="warn" class="alert warn"></div>
+
+<!-- ══════════ SISTEMA ══════════ -->
+<section aria-labelledby="h-sys">
+  <h2 id="h-sys">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    Sistema
+  </h2>
+  <dl class="kv">
+    <dt>WebGPU</dt><dd id="s-gpu">rilevamento…</dd>
+    <dt>GPU</dt><dd id="s-adapter">—</dd>
+    <dt>float16 (shader-f16)</dt><dd id="s-f16">—</dd>
+    <dt>Buffer GPU max</dt><dd id="s-buf">—</dd>
+    <dt>CPU threads</dt><dd id="s-cores">—</dd>
+    <dt>Cache modelli usata</dt><dd id="s-storage">—</dd>
+  </dl>
+  <div class="controls" style="margin-top:14px;margin-bottom:0">
+    <button id="btn-clear-all" class="danger">Cancella tutta la cache</button>
+    <button id="btn-unload" disabled>Scarica modello dalla memoria</button>
+    <label class="toggle" for="autoclean"><input type="checkbox" id="autoclean" checked>cancella tutto alla chiusura della pagina</label>
+  </div>
+</section>
+
+<!-- ══════════ MODELLI ══════════ -->
+<section aria-labelledby="h-models">
+  <h2 id="h-models">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/></svg>
+    Modelli
+  </h2>
+  <p class="sub">Scegli il modello più grande che la RAM del Mac in prova può reggere: è così che capisci se vale la differenza di prezzo. Il download resta nella cache del browser (in incognito sparisce da solo).</p>
+  <div id="models"></div>
+  <div class="progress" id="progress">
+    <div class="bar"><i id="bar-fill"></i></div>
+    <p id="progress-text"></p>
+  </div>
+</section>
+
+<!-- ══════════ SUITE DI TEST ══════════ -->
+<section aria-labelledby="h-suite">
+  <h2 id="h-suite">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Suite workflow reali
+  </h2>
+  <p class="sub">Cinque test che simulano l’uso vero di un LLM locale. Esegui la suite con lo stesso modello su Mac diversi e confronta i report.</p>
+  <div class="controls">
+    <label for="machine" class="sub">Macchina in prova:</label>
+    <input type="text" id="machine" placeholder="es. MacBook Pro M4 Pro 24GB" style="flex:1;min-width:220px">
+  </div>
+  <div class="controls" style="margin-top:0">
+    <button id="btn-suite" class="primary" disabled>Esegui tutti i test</button>
+    <button id="btn-stop" disabled>Stop</button>
+    <button id="btn-report" disabled>Copia report</button>
+  </div>
+  <div class="tablewrap">
+    <table id="suite-table" aria-label="Risultati suite">
+      <thead><tr><th>Test</th><th>Simula</th><th>Primo token</th><th>Prefill tok/s</th><th>Generazione tok/s</th><th>Durata</th><th>Esito</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="stats" id="verdict"></div>
+
+  <h3>Output del test in corso</h3>
+  <div class="out" id="out" aria-live="polite">L’output apparirà qui durante i test.</div>
+
+  <h3>Confronto tra esecuzioni (questa sessione)</h3>
+  <div class="tablewrap">
+    <table id="history" aria-label="Storico esecuzioni">
+      <thead><tr><th>Macchina</th><th>Modello</th><th>Primo token</th><th>Prefill tok/s</th><th>Generazione tok/s</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════ PROMPT LIBERO ══════════ -->
+<section aria-labelledby="h-chat">
+  <h2 id="h-chat">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Prompt libero
+  </h2>
+  <label for="prompt" class="sub" style="display:block;margin-bottom:6px">Prova quello che vuoi con il modello caricato</label>
+  <textarea id="prompt" placeholder="Scrivi qui il prompt…">Spiega in 5 frasi perché il cielo è blu.</textarea>
+  <div class="controls">
+    <button id="btn-send" class="primary" disabled>Invia</button>
+    <label class="toggle" for="think"><input type="checkbox" id="think">ragionamento (Qwen3)</label>
+  </div>
+  <div class="stats" id="chat-stats"></div>
+</section>
+
+<!-- ══════════ LOG ══════════ -->
+<section aria-labelledby="h-log">
+  <h2 id="h-log">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+    Log dettagliato
+  </h2>
+  <p class="sub">Ogni passaggio con orario. Se qualcosa va storto, <b>Copia log</b> e mandamelo.</p>
+  <div class="controls"><button id="btn-copy-log" class="small">Copia log</button></div>
+  <div id="logbox" aria-live="polite"></div>
+</section>
+
+<footer>
+  Motore: <a href="https://github.com/mlc-ai/web-llm" rel="noopener">WebLLM (MLC)</a> · WebGPU → Metal su macOS · Tutto resta nella cache locale del browser; in incognito viene eliminato alla chiusura.
+</footer>
+</div>
+
+<!-- barra di stato sempre visibile -->
+<div id="statusbar" role="status">
+  <span class="pulse" id="pulse"></span>
+  <span id="status-phase">Avvio</span>
+  <span id="status-detail">inizializzazione pagina…</span>
+  <span id="status-clock"></span>
+</div>
+
+<script type="module">
+import * as webllm from "https://esm.run/@mlc-ai/web-llm@0.2.84";
+
+/* ── Catalogo modelli ─────────────────────────────────────────── */
+const HF = "https://huggingface.co/mlc-ai/";
+const LIB = "https://huggingface.co/gwak2837/webllm-model-libs/resolve/main/";
+
+const CATALOG = [
+  { tier: "Test rapido — parte ovunque", models: [
+    { id:"Qwen3-0.6B-q4f16_1-MLC", name:"Qwen3 0.6B", dl:0.3, vram:1.5,
+      note:"Verifica in un minuto che WebGPU funzioni davvero." },
+    { id:"Qwen3-0.6B-q4f32_1-MLC", name:"Qwen3 0.6B (f32)", dl:0.4, vram:2.9,
+      note:"Variante per GPU senza float16: funziona quasi ovunque." },
+  ]},
+  { tier: "8–9B — MacBook Air / 16GB", models: [
+    { id:"Llama-3.1-8B-Instruct-q4f16_1-MLC", name:"Llama 3.1 8B", dl:4.5, vram:5.1,
+      note:"Lo standard di riferimento della classe 8B." },
+    { id:"Qwen3.5-9B-q4f16_1-MLC", name:"Qwen3.5 9B", dl:5.0, vram:6.4,
+      note:"Recente e molto capace per la sua taglia." },
+    { id:"gemma-2-9b-it-q4f16_1-MLC", name:"Gemma 2 9B", dl:5.2, vram:6.4,
+      note:"L’alternativa di Google nella stessa classe." },
+    { id:"Llama-3.1-8B-Instruct-q4f32_1-MLC", name:"Llama 3.1 8B (f32)", dl:4.5, vram:6.1,
+      note:"Variante per GPU senza float16 (es. Chrome su Linux)." },
+  ]},
+  { tier: "13–14B — Mac 18–24GB", models: [
+    { id:"Llama-2-13b-chat-hf-q4f16_1-MLC", name:"Llama 2 13B", dl:7.3, vram:11.8,
+      note:"Il classico 13B (2023): utile come metro di paragone." },
+    { id:"Qwen3-14B-q4f16_1-MLC", name:"Qwen3 14B", dl:8.3, vram:10.5, community:true,
+      note:"Moderno, ottimo compromesso qualità/peso.",
+      custom:{ model: HF+"Qwen3-14B-q4f16_1-MLC", lib: LIB+"Qwen3-14B-q4f16_1-ctx40k_cs2k-webgpu.wasm" } },
+  ]},
+  { tier: "30B — Mac 32–48GB", models: [
+    { id:"Qwen3-30B-A3B-q4f16_1-MLC", name:"Qwen3 30B-A3B (MoE)", dl:17.2, vram:19.5, community:true,
+      note:"30B totali ma 3B attivi per token: qualità da 30B, velocità da modello piccolo.",
+      custom:{ model: HF+"Qwen3-30B-A3B-q4f16_1-MLC", lib: LIB+"Qwen3-30B-A3B-q4f16_1-ctx40k_cs2k-webgpu.wasm" } },
+  ]},
+  { tier: "70B — Mac 48–64GB+", models: [
+    { id:"Llama-3.1-70B-Instruct-q3f16_1-MLC", name:"Llama 3.1 70B (q3)", dl:31.8, vram:31.5,
+      note:"Il vero test per un Mac di fascia alta. Download ~32GB: serve pazienza e Wi-Fi buono." },
+  ]},
+];
+const ALL = CATALOG.flatMap(t => t.models);
+
+const appConfig = { ...webllm.prebuiltAppConfig };
+appConfig.model_list = [
+  ...webllm.prebuiltAppConfig.model_list,
+  ...ALL.filter(m => m.custom).map(m => ({
+    model: m.custom.model,
+    model_id: m.id,
+    model_lib: m.custom.lib,
+    vram_required_MB: m.vram * 1000,
+    low_resource_required: false,
+    overrides: { context_window_size: 8192 },
+  })),
+];
+
+/* ── Stato globale ────────────────────────────────────────────── */
+let engine = null, loadedId = null, generating = false, suiteRunning = false;
+let lastError = null;
+const $ = id => document.getElementById(id);
+
+/* ── Log ──────────────────────────────────────────────────────── */
+const logLines = [];
+function now(){ return new Date().toLocaleTimeString("it-IT", { hour12: false }); }
+function log(msg, cls){
+  logLines.push(`[${now()}] ${msg}`);
+  if (logLines.length > 2000) logLines.shift();
+  const div = document.createElement("div");
+  div.innerHTML = `<span class="t">[${now()}]</span> `;
+  div.appendChild(document.createTextNode(msg));
+  if (cls) div.classList.add(cls);
+  const box = $("logbox");
+  box.appendChild(div);
+  while (box.children.length > 400) box.removeChild(box.firstChild);
+  box.scrollTop = box.scrollHeight;
+}
+
+/* ── Barra di stato ───────────────────────────────────────────── */
+let phaseStart = performance.now(), currentPhase = "Avvio", stallWarnAt = null;
+function setStatus(phase, detail, mode){ // mode: 'idle' | 'busy' | 'err'
+  if (phase !== currentPhase) { phaseStart = performance.now(); currentPhase = phase; stallWarnAt = null; log(`— ${phase}${detail ? ": " + detail : ""}`); }
+  $("status-phase").textContent = phase;
+  $("status-detail").textContent = detail ?? "";
+  $("pulse").className = "pulse" + (mode === "busy" ? " busy" : mode === "err" ? " err" : "");
+}
+function setDetail(detail){ $("status-detail").textContent = detail; lastActivity = performance.now(); }
+let lastActivity = performance.now();
+setInterval(() => {
+  const inPhase = Math.floor((performance.now() - phaseStart) / 1000);
+  $("status-clock").textContent = inPhase >= 3 ? `da ${inPhase}s` : "";
+  // avviso "sembra fermo" specifico per fase
+  const quiet = (performance.now() - lastActivity) / 1000;
+  if (currentPhase.startsWith("Download") && quiet > 30 && !stallWarnAt) {
+    stallWarnAt = quiet;
+    log(`Nessun progresso nel download da ${Math.floor(quiet)}s: rete lenta o bloccata. La pagina è viva (il pallino pulsa).`, "w");
+  }
+  if (currentPhase.startsWith("Compilazione") && quiet > 240 && !stallWarnAt) {
+    stallWarnAt = quiet;
+    log(`Compilazione shader oltre i 4 minuti: probabilmente qualcosa si è bloccato. Copia il log e ricarica la pagina.`, "w");
+  }
+}, 1000);
+
+/* ── Errori copiabili ─────────────────────────────────────────── */
+function showError(msg, err){
+  lastError = {
+    quando: new Date().toISOString(),
+    messaggio: msg,
+    dettaglio: err ? String(err?.stack ?? err?.message ?? err) : null,
+    fase: currentPhase,
+    modello: loadedId,
+    gpu: $("s-adapter").textContent,
+    f16: $("s-f16").textContent,
+    browser: navigator.userAgent,
+  };
+  $("alert-msg").textContent = msg;
+  $("alert").classList.add("show");
+  setStatus("Errore", msg.slice(0, 120), "err");
+  log("ERRORE: " + msg + (err ? " — " + String(err?.message ?? err) : ""), "e");
+}
+function clearError(){ $("alert").classList.remove("show"); lastError = null; }
+async function copyText(text, btn){
+  try { await navigator.clipboard.writeText(text); } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); ta.remove();
+  }
+  const old = btn.textContent; btn.textContent = "Copiato ✓";
+  setTimeout(() => btn.textContent = old, 1500);
+}
+$("btn-copy-err").addEventListener("click", e =>
+  copyText("== ERRORE LLM Mac Test ==\n" + JSON.stringify(lastError, null, 2), e.target));
+$("btn-copy-log").addEventListener("click", e => copyText(logLines.join("\n"), e.target));
+
+/* ── Info sistema ─────────────────────────────────────────────── */
+let f16ok = false;
+async function initSystem(){
+  $("s-cores").textContent = (navigator.hardwareConcurrency ?? "?") + " thread" +
+    (navigator.deviceMemory ? ` · RAM ≥ ${navigator.deviceMemory}GB (minimo riportato dal browser)` : "");
+  if (!("gpu" in navigator)) {
+    $("s-gpu").innerHTML = '<span class="badge err">non supportato</span>';
+    $("warn").textContent = "Questo browser non espone WebGPU. Su Mac usa Safari 18+ o Chrome/Edge recenti.";
+    $("warn").classList.add("show");
+    setStatus("Pronto", "WebGPU non disponibile in questo browser", "err");
+    return;
+  }
+  try {
+    const adapter = await navigator.gpu.requestAdapter({ powerPreference: "high-performance" })
+      ?? await navigator.gpu.requestAdapter();
+    if (!adapter) {
+      $("s-gpu").innerHTML = '<span class="badge err">nessun adapter</span>';
+      showAdapterHelp();
+      setStatus("Pronto", "GPU non accessibile — vedi istruzioni in alto", "err");
+      return;
+    }
+    $("s-gpu").innerHTML = '<span class="badge ok">disponibile</span>';
+    const info = adapter.info ?? {};
+    const desc = [info.vendor, info.architecture, info.description].filter(Boolean).join(" · ");
+    $("s-adapter").textContent = desc || "dettagli non esposti";
+    f16ok = adapter.features.has("shader-f16");
+    $("s-f16").innerHTML = f16ok ? '<span class="badge ok">supportato</span>' : '<span class="badge err">assente</span>';
+    $("s-buf").textContent = (adapter.limits.maxBufferSize / 1024/1024/1024).toFixed(1) + " GB (maxBufferSize)";
+    log(`GPU: ${desc || "sconosciuta"} · f16 ${f16ok ? "sì" : "no"}`);
+    const software = /swiftshader|llvmpipe|software/i.test(desc);
+    if (software) {
+      $("warn").innerHTML = "Adapter <b>software</b> (SwiftShader): la GPU reale non è in uso, le prestazioni non saranno indicative. " +
+        "Su Linux avvia Chrome con <code>--use-angle=vulkan</code> (oltre ai flag WebGPU).";
+      $("warn").classList.add("show");
+    } else if (!f16ok) {
+      $("warn").textContent = "La GPU non espone shader-f16 (tipico di Chrome su Linux): partiranno solo i modelli marcati f32. Su macOS i modelli f16 funzionano normalmente.";
+      $("warn").classList.add("show");
+    }
+  } catch (e) {
+    $("s-gpu").innerHTML = '<span class="badge err">errore</span>';
+    showError("WebGPU presente ma inizializzazione fallita", e);
+  }
+}
+
+function showAdapterHelp(){
+  const ua = navigator.userAgent;
+  const os = /Mac/i.test(ua) ? "mac" : /Linux/i.test(ua) ? "linux" : /Win/i.test(ua) ? "win" : "?";
+  let html = "<b>WebGPU è presente ma il browser non ha dato accesso alla GPU.</b><br>";
+  if (os === "linux") {
+    html += "Su <b>Linux</b> Chrome tiene WebGPU dietro flag:<br>" +
+      "1. Apri <code>chrome://flags</code> e abilita <b>Unsafe WebGPU Support</b> e <b>Vulkan</b>, poi riavvia il browser.<br>" +
+      "2. In alternativa, da terminale: <code>google-chrome --enable-unsafe-webgpu --enable-features=Vulkan --use-angle=vulkan</code><br>" +
+      "Serve il driver Vulkan della GPU installato (per NVIDIA: driver proprietario).";
+  } else if (os === "mac") {
+    html += "Su <b>macOS</b> WebGPU è attivo di default in Safari 18+, Chrome ed Edge recenti: aggiorna il browser e riprova.";
+  } else if (os === "win") {
+    html += "Su <b>Windows</b> WebGPU è attivo di default in Chrome/Edge dalla versione 113: aggiorna il browser. Verifica anche i driver GPU.";
+  } else {
+    html += "Aggiorna il browser a una versione recente di Chrome, Edge o Safari.";
+  }
+  html += "<br>Stato dettagliato: <code>chrome://gpu</code>";
+  $("warn").innerHTML = html;
+  $("warn").classList.add("show");
+}
+
+async function refreshStorage(){
+  try {
+    const est = await navigator.storage.estimate();
+    $("s-storage").textContent = (est.usage/1024/1024/1024).toFixed(2) + " GB su " +
+      (est.quota/1024/1024/1024).toFixed(0) + " GB disponibili";
+  } catch { $("s-storage").textContent = "n/d"; }
+}
+
+/* ── Cache locale (Cache API, nessuna richiesta di rete) ──────── */
+const CACHE_SCOPES = ["webllm/model", "webllm/config", "webllm/wasm"];
+function withTimeout(p, ms, fallback){
+  return Promise.race([p, new Promise(res => setTimeout(() => res(fallback), ms))]);
+}
+async function cachedModelSet(){
+  const set = new Set();
+  try {
+    const c = await withTimeout(caches.open("webllm/model"), 2000, null);
+    if (!c) return set;
+    const keys = await withTimeout(c.keys(), 2000, []);
+    for (const m of ALL) {
+      const base = appConfig.model_list.find(r => r.model_id === m.id)?.model;
+      if (base && keys.some(k => k.url.startsWith(base))) set.add(m.id);
+    }
+  } catch {}
+  return set;
+}
+
+/* ── Card modelli ─────────────────────────────────────────────── */
+async function renderModels(){
+  const root = $("models");
+  root.innerHTML = "";
+  const cachedSet = await cachedModelSet();
+  for (const tier of CATALOG) {
+    const h = document.createElement("h3");
+    h.textContent = tier.tier;
+    root.appendChild(h);
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    for (const m of tier.models) {
+      const cached = cachedSet.has(m.id);
+      const card = document.createElement("div");
+      card.className = "card" + (m.id === loadedId ? " active" : "");
+      card.innerHTML = `
+        <div class="name">${m.name}</div>
+        <div class="meta">
+          <span class="badge">download ${m.dl} GB</span>
+          <span class="badge">VRAM ~${m.vram} GB</span>
+          ${m.community ? '<span class="badge info" title="Libreria WebGPU compilata dalla community">community</span>' : ""}
+          ${(!f16ok && !m.id.includes("f32")) ? '<span class="badge warn">richiede f16</span>' : ""}
+          ${cached ? '<span class="badge ok">in cache</span>' : ""}
+          ${m.id === loadedId ? '<span class="badge ok">caricato</span>' : ""}
+        </div>
+        <div class="note">${m.note}</div>
+        <div class="row">
+          <button class="primary small" data-load="${m.id}">${cached ? "Carica" : "Scarica e carica"}</button>
+          ${cached ? `<button class="danger small" data-del="${m.id}">Elimina</button>` : ""}
+        </div>`;
+      grid.appendChild(card);
+    }
+    root.appendChild(grid);
+  }
+  root.querySelectorAll("[data-load]").forEach(b => b.addEventListener("click", () => loadModel(b.dataset.load)));
+  root.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => deleteModel(b.dataset.del)));
+}
+
+/* ── Caricamento modello (in Web Worker: la UI non si blocca) ─── */
+function setBusy(busy){
+  document.querySelectorAll("[data-load],[data-del]").forEach(b => b.disabled = busy);
+  $("btn-clear-all").disabled = busy;
+}
+function progressHandler(p){
+  lastActivity = performance.now();
+  $("bar-fill").style.width = Math.round((p.progress ?? 0) * 100) + "%";
+  $("progress-text").textContent = p.text ?? "";
+  const t = p.text ?? "";
+  if (/fetch/i.test(t)) {
+    const mb = t.match(/(\d+)MB fetched/); const pct = t.match(/(\d+)% completed/); const el = t.match(/(\d+) secs/);
+    const rate = mb && el && +el[1] > 0 ? ` · ${(+mb[1] / +el[1]).toFixed(1)} MB/s` : "";
+    setStatus("Download modello", `${pct ? pct[1] + "%" : "…"}${mb ? " · " + mb[1] + " MB" : ""}${rate}`, "busy");
+    if (pct && +pct[1] % 10 === 0 && +pct[1] !== progressHandler._last) { progressHandler._last = +pct[1]; log(`Download ${pct[1]}% (${mb ? mb[1] + " MB" : ""}${rate})`); }
+  } else if (/shader|module/i.test(t)) {
+    setStatus("Compilazione shader GPU", "può richiedere ~1 minuto, la pagina non è bloccata", "busy");
+  } else if (/loading|gpu/i.test(t)) {
+    setStatus("Caricamento pesi su GPU", t.slice(0, 100), "busy");
+  } else if (t) {
+    setStatus("Preparazione modello", t.slice(0, 100), "busy");
+  }
+}
+
+async function createEngine(id){
+  const cfg = { appConfig, initProgressCallback: progressHandler };
+  try {
+    const worker = new Worker(new URL("./worker.js", location.href), { type: "module" });
+    const workerBroken = new Promise((_, rej) =>
+      worker.addEventListener("error", e => rej(new Error("worker: " + (e.message || "errore di caricamento"))), { once: true }));
+    const eng = await Promise.race([webllm.CreateWebWorkerMLCEngine(worker, id, cfg), workerBroken]);
+    log("Motore avviato in un Web Worker (UI sempre reattiva).");
+    return eng;
+  } catch (e) {
+    log("Web Worker non disponibile (" + (e?.message ?? e) + "), uso il thread principale.", "w");
+    return await webllm.CreateMLCEngine(id, cfg);
+  }
+}
+
+async function loadModel(id){
+  clearError();
+  if (generating || suiteRunning) return;
+  setBusy(true);
+  $("progress").classList.add("show");
+  $("bar-fill").style.width = "0%";
+  const name = ALL.find(m => m.id === id)?.name ?? id;
+  setStatus("Preparazione modello", name, "busy");
+  log(`Richiesto caricamento: ${name} (${id})`);
+  const t0 = performance.now();
+  try {
+    if (engine) { setDetail("scarico il modello precedente dalla memoria…"); await engine.unload(); engine = null; loadedId = null; }
+    engine = await createEngine(id);
+    loadedId = id;
+    const secs = ((performance.now() - t0) / 1000).toFixed(0);
+    setStatus("Pronto", `${name} caricato in ${secs}s — puoi lanciare i test`, "idle");
+    log(`Modello pronto in ${secs}s.`);
+    for (const b of ["btn-send", "btn-suite", "btn-unload"]) $(b).disabled = false;
+    $("progress").classList.remove("show");
+  } catch (e) {
+    $("progress").classList.remove("show");
+    const msg = String(e?.message ?? e);
+    if (!f16ok && !id.includes("f32"))
+      showError("Questa GPU non espone float16 (shader-f16), richiesto dai modelli q4f16. Prova un modello marcato f32.", e);
+    else if (/buffer|memory|device|out of/i.test(msg))
+      showError("Memoria GPU insufficiente per questo modello: prova un modello più piccolo.", e);
+    else
+      showError("Errore nel caricamento del modello.", e);
+    engine = null; loadedId = null;
+  }
+  setBusy(false);
+  refreshStorage();
+  renderModels();
+}
+
+async function deleteModel(id){
+  clearError();
+  setStatus("Pulizia cache", ALL.find(m => m.id === id)?.name ?? id, "busy");
+  try {
+    const rec = appConfig.model_list.find(r => r.model_id === id);
+    for (const scope of CACHE_SCOPES) {
+      const c = await caches.open(scope);
+      for (const k of await c.keys()) {
+        if ((rec?.model && k.url.startsWith(rec.model)) || (rec?.model_lib && k.url === rec.model_lib))
+          await c.delete(k);
+      }
+    }
+    log(`Cache eliminata per ${id}.`);
+  } catch (e) { showError("Errore nella cancellazione della cache.", e); }
+  setStatus("Pronto", "", "idle");
+  refreshStorage();
+  renderModels();
+}
+
+$("btn-clear-all").addEventListener("click", async () => {
+  clearError();
+  setStatus("Pulizia cache", "elimino tutti i modelli scaricati…", "busy");
+  if (engine) { try { await engine.unload(); } catch {} engine = null; loadedId = null; }
+  for (const c of CACHE_SCOPES) { try { await caches.delete(c); } catch {} }
+  log("Cache svuotata completamente.");
+  for (const b of ["btn-send", "btn-suite", "btn-unload"]) $(b).disabled = true;
+  setStatus("Pronto", "cache vuota", "idle");
+  refreshStorage();
+  renderModels();
+});
+
+$("btn-unload").addEventListener("click", async () => {
+  setStatus("Scarico modello", "libero la memoria GPU…", "busy");
+  if (engine) { try { await engine.unload(); } catch {} }
+  engine = null; loadedId = null;
+  for (const b of ["btn-send", "btn-suite", "btn-unload"]) $(b).disabled = true;
+  log("Modello scaricato dalla memoria.");
+  setStatus("Pronto", "nessun modello in memoria", "idle");
+  renderModels();
+});
+
+/* pulizia automatica alla chiusura (best-effort; in incognito è comunque garantita dal browser) */
+window.addEventListener("pagehide", () => {
+  if ($("autoclean").checked) for (const c of CACHE_SCOPES) caches.delete(c);
+});
+
+/* ── Generazione (condivisa da suite e prompt libero) ─────────── */
+function fmt(n, d = 1){ return (n == null || !isFinite(n)) ? "—" : n.toFixed(d); }
+
+async function streamChat(promptText, maxTokens, phaseLabel){
+  const isQwen3 = /^Qwen3/.test(loadedId);
+  const promptTokens = Math.round(promptText.length / 4);
+  setStatus(phaseLabel, `prefill: elaboro ~${promptTokens} token di contesto…`, "busy");
+  const out = $("out");
+  out.textContent = "";
+  const t0 = performance.now();
+  let tFirst = null, usage = null, nChunks = 0, raw = "";
+  const req = {
+    messages: [{ role: "user", content: promptText }],
+    stream: true,
+    stream_options: { include_usage: true },
+    max_tokens: maxTokens,
+    temperature: 0.7,
+  };
+  if (isQwen3) req.extra_body = { enable_thinking: $("think").checked };
+  const chunks = await engine.chat.completions.create(req);
+  let lastUi = 0;
+  for await (const chunk of chunks) {
+    const delta = chunk.choices?.[0]?.delta?.content;
+    if (delta) {
+      if (tFirst === null) { tFirst = performance.now(); log(`Primo token dopo ${((tFirst - t0) / 1000).toFixed(2)}s.`); }
+      nChunks++; raw += delta;
+      out.textContent = $("think").checked ? raw
+        : raw.replace(/^\s*<think>[\s\S]*?<\/think>\s*/, "").replace(/^\s*<think>[\s\S]*$/, "…");
+      const nowMs = performance.now();
+      if (nowMs - lastUi > 400) {
+        lastUi = nowMs; lastActivity = nowMs;
+        const tps = nChunks / ((nowMs - tFirst) / 1000);
+        setStatus(phaseLabel, `generazione: ${nChunks} token · ${tps.toFixed(1)} tok/s`, "busy");
+        out.scrollTop = out.scrollHeight;
+      }
+    }
+    if (chunk.usage) usage = chunk.usage;
+  }
+  const tEnd = performance.now();
+  const ttft = tFirst ? (tFirst - t0) / 1000 : null;
+  const extra = usage?.extra ?? {};
+  let decodeTps = extra.decode_tokens_per_s;
+  if (decodeTps == null && usage?.completion_tokens && tFirst)
+    decodeTps = usage.completion_tokens / ((tEnd - tFirst) / 1000);
+  return {
+    ttft, prefillTps: extra.prefill_tokens_per_s ?? null, decodeTps: decodeTps ?? null,
+    tokens: usage?.completion_tokens ?? nChunks, seconds: (tEnd - t0) / 1000,
+  };
+}
+
+/* ── Documento lungo per il test di analisi (contenuto fisso → prefill confrontabile) ── */
+const DOC_BASE = `Relazione trimestrale — Progetto Aurora. Il terzo trimestre si è chiuso con risultati superiori alle attese: i ricavi ricorrenti sono cresciuti del diciotto per cento rispetto al trimestre precedente, trainati dall'adozione del nuovo piano professionale e dall'espansione nel mercato tedesco. Il tasso di abbandono mensile è sceso dall'uno virgola nove all'uno virgola due per cento, il valore più basso mai registrato dal lancio del prodotto. Il team di ingegneria ha completato la migrazione dell'infrastruttura verso l'architettura a eventi, riducendo la latenza media delle API da duecentoquaranta a novanta millisecondi e i costi di calcolo del ventitré per cento. Restano aperte tre criticità: la coda di richieste di assistenza è cresciuta del quaranta per cento senza un aumento proporzionale del personale di supporto; il rilascio dell'applicazione mobile è slittato di sei settimane per problemi di certificazione; la dipendenza da un singolo fornitore di pagamenti espone l'azienda a un rischio operativo giudicato alto dal comitato di revisione. Sul fronte commerciale, la pipeline enterprise conta ventidue trattative attive per un valore complessivo di due virgola sette milioni, di cui otto in fase contrattuale. Il costo di acquisizione cliente è salito del dodici per cento a causa dell'aumento delle tariffe pubblicitarie, ma il valore del ciclo di vita del cliente resta quattro virgola sei volte superiore, entro la soglia di sostenibilità definita dal consiglio. Le priorità per il prossimo trimestre sono: assumere quattro persone nel supporto clienti, completare la certificazione mobile entro fine novembre, avviare l'integrazione con un secondo fornitore di pagamenti, e portare il margine lordo dal settantuno al settantaquattro per cento attraverso la rinegoziazione dei contratti cloud. `;
+const LONG_DOC = DOC_BASE.repeat(3);
+
+/* ── Suite di test ────────────────────────────────────────────── */
+const TESTS = [
+  { name: "Reattività chat", sim: "domanda al volo",
+    prompt: "Ciao! Dammi tre idee veloci per una cena con quello che si trova in ogni frigo. Rispondi in modo breve.",
+    max: 150, key: "ttft" },
+  { name: "Scrittura", sim: "email di lavoro",
+    prompt: "Scrivi una email formale in italiano (circa 250 parole) per chiedere a un fornitore il rimborso di una fattura pagata due volte, citando numero fattura FT-2214 e importo 1.840 euro, con tono fermo ma cortese.",
+    max: 450, key: "decode" },
+  { name: "Analisi documento", sim: "riassunto di un report",
+    prompt: LONG_DOC + "\n\nRiassumi la relazione qui sopra in cinque punti essenziali, poi indica il rischio più urgente.",
+    max: 350, key: "prefill" },
+  { name: "Codice", sim: "assistente di programmazione",
+    prompt: "Scrivi una funzione Python `dedup_files(paths)` che trova file duplicati confrontando prima la dimensione e poi l'hash SHA-256 a blocchi, restituendo un dizionario hash → lista di percorsi. Aggiungi docstring e un esempio d'uso.",
+    max: 450, key: "decode" },
+  { name: "Traduzione", sim: "italiano → inglese",
+    prompt: "Traduci in inglese professionale: \"Gentile cliente, la informiamo che a partire dal primo gennaio i termini di assistenza cambieranno: il supporto telefonico sarà disponibile solo per i piani business, mentre tutti gli altri piani manterranno l'assistenza via posta elettronica con risposta garantita entro un giorno lavorativo.\"",
+    max: 300, key: "decode" },
+];
+
+let suiteResults = null;
+function esito(t, r){
+  if (t.key === "ttft") return r.ttft == null ? "—" : r.ttft < 1.5 ? "ottimo" : r.ttft < 4 ? "buono" : "lento";
+  if (t.key === "prefill") return r.prefillTps == null ? "—" : r.prefillTps > 200 ? "ottimo" : r.prefillTps > 60 ? "buono" : "lento";
+  return r.decodeTps == null ? "—" : r.decodeTps > 20 ? "ottimo" : r.decodeTps > 10 ? "buono" : "lento";
+}
+
+async function runSuite(){
+  if (!engine || suiteRunning) return;
+  clearError();
+  suiteRunning = true;
+  $("btn-suite").disabled = true; $("btn-send").disabled = true; $("btn-stop").disabled = false;
+  setBusy(true);
+  const tbody = $("suite-table").querySelector("tbody");
+  tbody.innerHTML = ""; $("verdict").innerHTML = "";
+  const modelName = ALL.find(m => m.id === loadedId)?.name ?? loadedId;
+  log(`Suite avviata con ${modelName}.`);
+  const results = [];
+  try {
+    for (let i = 0; i < TESTS.length; i++) {
+      const t = TESTS[i];
+      const tr = document.createElement("tr");
+      tr.className = "testrow-run";
+      tr.innerHTML = `<td>${t.name}</td><td>${t.sim}</td><td colspan="4">in corso…</td><td></td>`;
+      tbody.appendChild(tr);
+      log(`Test ${i + 1}/${TESTS.length}: ${t.name} (${t.sim})`);
+      const r = await streamChat(t.prompt, t.max, `Test ${i + 1}/${TESTS.length} — ${t.name}`);
+      r.test = t;
+      results.push(r);
+      tr.className = "";
+      tr.innerHTML = `<td>${t.name}</td><td>${t.sim}</td><td>${fmt(r.ttft, 2)}s</td><td>${fmt(r.prefillTps, 0)}</td><td>${fmt(r.decodeTps, 1)}</td><td>${fmt(r.seconds, 0)}s</td><td>${esito(t, r)}</td>`;
+      log(`${t.name}: primo token ${fmt(r.ttft, 2)}s · prefill ${fmt(r.prefillTps, 0)} tok/s · generazione ${fmt(r.decodeTps, 1)} tok/s · ${esito(t, r)}`);
+    }
+    suiteResults = { machine: $("machine").value.trim() || "macchina senza nome", model: modelName, results, when: new Date().toLocaleString("it-IT") };
+    const dec = results.map(r => r.decodeTps).filter(Boolean);
+    const avgDecode = dec.length ? dec.reduce((a, b) => a + b) / dec.length : null;
+    const prefill = results.find(r => r.test.key === "prefill")?.prefillTps ?? null;
+    const ttft = results[0]?.ttft ?? null;
+    const giudizio = avgDecode == null ? "incompleto"
+      : avgDecode > 25 && (prefill ?? 999) > 150 ? "Fluido: questo Mac regge bene il modello, uso quotidiano senza attese."
+      : avgDecode > 12 ? "Usabile: va bene per uso normale, qualche attesa sui documenti lunghi."
+      : "Lento con questo modello: per uso reale servirebbe un modello più piccolo o più RAM/GPU.";
+    $("verdict").innerHTML = `
+      <span class="chip">media generazione <b>${fmt(avgDecode, 1)}</b> tok/s</span>
+      <span class="chip">prefill <b>${fmt(prefill, 0)}</b> tok/s</span>
+      <span class="chip">reattività <b>${fmt(ttft, 2)}s</b></span>
+      <span class="chip">${giudizio}</span>`;
+    suiteResults.avgDecode = avgDecode; suiteResults.prefill = prefill; suiteResults.ttft = ttft; suiteResults.giudizio = giudizio;
+    const hr = document.createElement("tr");
+    hr.innerHTML = `<td>${suiteResults.machine}</td><td>${modelName}</td><td>${fmt(ttft, 2)}s</td><td>${fmt(prefill, 0)}</td><td>${fmt(avgDecode, 1)}</td>`;
+    $("history").querySelector("tbody").appendChild(hr);
+    $("btn-report").disabled = false;
+    setStatus("Pronto", `suite completata — ${giudizio.split(":")[0]}`, "idle");
+    log("Suite completata. " + giudizio);
+  } catch (e) {
+    showError("Errore durante la suite di test.", e);
+  }
+  suiteRunning = false;
+  $("btn-suite").disabled = false; $("btn-send").disabled = false; $("btn-stop").disabled = true;
+  setBusy(false);
+}
+
+$("btn-suite").addEventListener("click", runSuite);
+$("btn-stop").addEventListener("click", () => { try { engine?.interruptGenerate(); log("Stop richiesto dall'utente.", "w"); } catch {} });
+
+$("btn-report").addEventListener("click", e => {
+  if (!suiteResults) return;
+  const s = suiteResults;
+  const lines = [
+    "== LLM Mac Test — report ==",
+    `Macchina: ${s.machine}`,
+    `Data: ${s.when}`,
+    `GPU: ${$("s-adapter").textContent} · f16: ${f16ok ? "sì" : "no"}`,
+    `Browser: ${navigator.userAgent}`,
+    `Modello: ${s.model}`,
+    "",
+    ...s.results.map(r => `${r.test.name.padEnd(18)} primo token ${fmt(r.ttft, 2)}s · prefill ${fmt(r.prefillTps, 0)} tok/s · generazione ${fmt(r.decodeTps, 1)} tok/s · ${esito(r.test, r)}`),
+    "",
+    `Media generazione: ${fmt(s.avgDecode, 1)} tok/s · Prefill: ${fmt(s.prefill, 0)} tok/s · Reattività: ${fmt(s.ttft, 2)}s`,
+    `Giudizio: ${s.giudizio}`,
+  ];
+  copyText(lines.join("\n"), e.target);
+});
+
+/* ── Prompt libero ────────────────────────────────────────────── */
+$("btn-send").addEventListener("click", async () => {
+  const p = $("prompt").value.trim();
+  if (!p || !engine || generating || suiteRunning) return;
+  clearError();
+  generating = true;
+  $("btn-send").disabled = true; $("btn-suite").disabled = true; $("btn-stop").disabled = false;
+  try {
+    const r = await streamChat(p, 1024, "Prompt libero");
+    $("chat-stats").innerHTML = `
+      <span class="chip">primo token <b>${fmt(r.ttft, 2)}s</b></span>
+      <span class="chip">prefill <b>${fmt(r.prefillTps, 0)}</b> tok/s</span>
+      <span class="chip">generazione <b>${fmt(r.decodeTps, 1)}</b> tok/s</span>
+      <span class="chip">token <b>${r.tokens}</b></span>`;
+    setStatus("Pronto", `risposta completata (${fmt(r.decodeTps, 1)} tok/s)`, "idle");
+  } catch (e) {
+    showError("Errore durante la generazione.", e);
+  }
+  generating = false;
+  $("btn-send").disabled = false; $("btn-suite").disabled = false; $("btn-stop").disabled = true;
+});
+
+/* ── Avvio ────────────────────────────────────────────────────── */
+log("Pagina avviata. " + navigator.userAgent);
+setStatus("Avvio", "rilevo GPU e cache…", "busy");
+initSystem().then(() => {
+  renderModels();
+  if ($("s-gpu").textContent.includes("disponibile"))
+    setStatus("Pronto", "scegli un modello per iniziare", "idle");
+});
+refreshStorage();
+</script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+---
+import { languages, useTranslations, type Lang } from '@/i18n';
+
+interface Props {
+  currentLang: Lang;
+  class?: string;
+  /** Opens upwards, for where the switcher sits near the bottom of the viewport. */
+  drop?: 'down' | 'up';
+}
+
+const { currentLang, class: className, drop = 'down' } = Astro.props;
+const t = useTranslations(currentLang);
+
+// Everything after the language segment, so switching keeps you on the same page.
+const [, first, ...rest] = Astro.url.pathname.split('/');
+const tail = (first in languages ? rest : [first, ...rest]).filter(Boolean).join('/');
+
+const options = (Object.keys(languages) as Lang[]).map((code) => ({
+  code,
+  label: languages[code],
+  // Plain concatenation: a nested template literal here breaks the Astro compiler.
+  href: '/' + code + (tail ? '/' + tail : '') + '/',
+  current: code === currentLang,
+  className: code === currentLang ? 'lang-option is-current' : 'lang-option',
+}));
+---
+
+<div class:list={['language-switch', `language-switch--${drop}`, className]} data-lang-switch>
+  <button
+    type="button"
+    class="lang-trigger"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-label={t('a11y.toggleLanguage')}
+  >
+    <span class="lang-trigger-label">{languages[currentLang]}</span>
+    <svg class="lang-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+      <path d="M4 6.5 8 10.5 12 6.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+
+  <ul class="lang-menu" role="listbox" tabindex="-1" aria-label={t('a11y.toggleLanguage')}>
+    {options.map((option) => (
+      <li role="none">
+        <a
+          class={option.className}
+          href={option.href}
+          role="option"
+          aria-selected={option.current}
+          data-lang={option.code}
+          hreflang={option.code}
+        >
+          <span class="lang-option-label">{option.label}</span>
+          <svg class="lang-check" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="m3.5 8.5 3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  // One delegated controller drives every switcher on the page, so the component
+  // can be rendered more than once (navbar + mobile menu) without colliding ids.
+  const SWITCH = '[data-lang-switch]';
+
+  function optionsOf(root: Element): HTMLAnchorElement[] {
+    return Array.from(root.querySelectorAll('.lang-option')) as HTMLAnchorElement[];
+  }
+
+  function close(root: Element, restoreFocus = false) {
+    if (!root.classList.contains('is-open')) return;
+    root.classList.remove('is-open');
+    const trigger = root.querySelector('.lang-trigger') as HTMLButtonElement | null;
+    trigger?.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) trigger?.focus();
+  }
+
+  function closeAll(except?: Element) {
+    document.querySelectorAll(SWITCH).forEach((root) => {
+      if (root !== except) close(root);
+    });
+  }
+
+  function open(root: Element, focus: 'current' | 'first' | 'last' | 'none' = 'none') {
+    closeAll(root);
+    root.classList.add('is-open');
+    root.querySelector('.lang-trigger')?.setAttribute('aria-expanded', 'true');
+
+    if (focus === 'none') return;
+    const items = optionsOf(root);
+    const target =
+      focus === 'last' ? items[items.length - 1]
+      : focus === 'current' ? items.find((el) => el.classList.contains('is-current')) ?? items[0]
+      : items[0];
+    target?.focus();
+  }
+
+  function move(root: Element, from: HTMLElement, step: number) {
+    const items = optionsOf(root);
+    const index = items.indexOf(from as HTMLAnchorElement);
+    if (index === -1) return;
+    items[(index + step + items.length) % items.length]?.focus();
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element | null;
+    const trigger = target?.closest('.lang-trigger') as HTMLButtonElement | null | undefined;
+
+    if (trigger) {
+      const root = trigger.closest(SWITCH)!;
+      root.classList.contains('is-open') ? close(root) : open(root);
+      return;
+    }
+
+    const option = target?.closest('.lang-option') as HTMLAnchorElement | null | undefined;
+    if (option?.dataset.lang) {
+      // Remember the choice so the root redirect can honour it next visit.
+      try {
+        localStorage.setItem('alexdevflow-lang', option.dataset.lang);
+      } catch {
+        // Private mode / blocked storage: switching still works, it just is not remembered.
+      }
+      return;
+    }
+
+    closeAll();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target as HTMLElement | null;
+    const root = target?.closest(SWITCH);
+
+    if (event.key === 'Escape') {
+      document.querySelectorAll(SWITCH + '.is-open').forEach((el) => close(el, el === root));
+      return;
+    }
+    if (!root) return;
+
+    const onTrigger = !!target?.closest('.lang-trigger');
+    const onOption = !!target?.closest('.lang-option');
+
+    if (onTrigger && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+      event.preventDefault();
+      open(root, event.key === 'ArrowDown' ? 'current' : 'last');
+      return;
+    }
+
+    if (onOption) {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        move(root, target!, 1);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        move(root, target!, -1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        optionsOf(root)[0]?.focus();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        optionsOf(root).at(-1)?.focus();
+      } else if (event.key === 'Tab') {
+        close(root);
+      }
+    }
+  });
+
+  // Focus leaving the switcher entirely closes it.
+  document.addEventListener('focusout', (event) => {
+    const root = (event.target as Element | null)?.closest(SWITCH);
+    if (!root) return;
+    requestAnimationFrame(() => {
+      if (!root.contains(document.activeElement)) close(root);
+    });
+  });
+</script>
+
+<style is:global>
+  .language-switch {
+    position: relative;
+    display: inline-block;
+  }
+
+  .lang-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--primary-color);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .lang-trigger:hover,
+  .language-switch.is-open .lang-trigger {
+    color: var(--accent-strong);
+    border-color: var(--accent-strong);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .lang-trigger:focus-visible {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 2px;
+  }
+
+  .lang-chevron {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.6;
+    transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  }
+
+  .language-switch.is-open .lang-chevron {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+
+  .lang-menu {
+    position: absolute;
+    right: 0;
+    z-index: 120;
+    min-width: max(100%, 10.5rem);
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 14px;
+    box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.28), 0 4px 12px -6px rgba(0, 0, 0, 0.14);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.97);
+    transform-origin: top right;
+    transition:
+      opacity 0.18s ease,
+      transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0.22s;
+  }
+
+  .language-switch--down .lang-menu { top: calc(100% + 8px); }
+
+  .language-switch--up .lang-menu {
+    bottom: calc(100% + 8px);
+    transform-origin: bottom right;
+    transform: translateY(6px) scale(0.97);
+  }
+
+  .language-switch.is-open .lang-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+
+  /* In the mobile drawer the trigger sits at the left edge, so a right-aligned
+     menu would hang off the panel. */
+  .mobile-menu .lang-menu {
+    right: auto;
+    left: 0;
+    transform-origin: top left;
+  }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    color: var(--primary-color);
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .lang-option:hover,
+  .lang-option:focus-visible {
+    background: rgba(9, 167, 224, 0.1);
+    color: var(--accent-strong);
+    outline: none;
+  }
+
+  .lang-option.is-current {
+    color: var(--accent-strong);
+    font-weight: 600;
+  }
+
+  .lang-check {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .lang-option.is-current .lang-check { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lang-menu,
+    .lang-chevron {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>

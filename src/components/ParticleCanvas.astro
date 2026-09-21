@@ -1,0 +1,299 @@
+---
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<canvas id="particle-canvas" data-text={text}></canvas>
+
+<script>
+  const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  const text = canvas.dataset.text || 'Alex';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+
+  /* ------------------------------------------------------------ physics ---
+     Each particle is a small mass on a spring anchored to its place in the
+     letterform. The pointer pushes it away, the spring pulls it home, and a
+     damper bleeds off the energy. That is what makes it settle instead of
+     snapping: it overshoots a little, then comes to rest.
+     ---------------------------------------------------------------------- */
+  const STIFFNESS = 26;    // spring constant, per second squared
+  const DAMPING = 5.2;     // higher settles sooner, lower wobbles longer
+  const PUSH_RADIUS = coarse ? 90 : 130;
+  const PUSH_FORCE = 2600; // acceleration at the centre of the pointer
+  const SAMPLE_STEP = coarse ? 3 : 2; // pixels between sampled points
+  const MAX_DELTA = 1 / 30; // never integrate a step larger than this
+
+  type Particle = {
+    x: number; y: number;
+    vx: number; vy: number;
+    homeX: number; homeY: number;
+    size: number;
+    /** Per particle variation, so they do not all move as one block. */
+    stiffness: number;
+    phase: number;
+    drift: number;
+  };
+
+  let particles: Particle[] = [];
+  let dpr = 1;
+  let cssWidth = 0;
+  let cssHeight = 0;
+
+  const pointer = { x: 0, y: 0, active: false };
+
+  const colour =
+    getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#333333';
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    cssWidth = Math.max(1, Math.round(rect.width));
+    cssHeight = Math.max(1, Math.round(rect.height));
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = cssWidth * dpr;
+    canvas.height = cssHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  /** Match the real <h1>, so the particles land exactly where the title is. */
+  function titleBox() {
+    const title = document.querySelector('.home-title');
+    const canvasRect = canvas.getBoundingClientRect();
+    if (title) {
+      const rect = title.getBoundingClientRect();
+      const size = parseFloat(getComputedStyle(title).fontSize);
+      if (size && rect.height) {
+        return { fontSize: size, centreY: rect.top - canvasRect.top + rect.height / 2 };
+      }
+    }
+    return { fontSize: Math.max(Math.min(cssWidth / 6, 120), 40), centreY: cssHeight * 0.35 };
+  }
+
+  /* Walk the rendered glyphs on a grid instead of throwing darts at the canvas
+     until one lands on ink: even density, and it does not get slower as the
+     text gets smaller. */
+  function sampleText(): { x: number; y: number }[] {
+    const { fontSize, centreY } = titleBox();
+
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+    ctx.font = `bold ${fontSize}px 'Montserrat', Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#000';
+    ctx.fillText(text, cssWidth / 2, centreY);
+
+    const metrics = ctx.measureText(text);
+    const left = Math.max(0, Math.floor(cssWidth / 2 - metrics.width / 2) - 4);
+    const right = Math.min(cssWidth, Math.ceil(cssWidth / 2 + metrics.width / 2) + 4);
+    const top = Math.max(0, Math.floor(centreY - fontSize) - 4);
+    const bottom = Math.min(cssHeight, Math.ceil(centreY + fontSize) + 4);
+
+    const image = ctx.getImageData(
+      Math.floor(left * dpr), Math.floor(top * dpr),
+      Math.max(1, Math.ceil((right - left) * dpr)), Math.max(1, Math.ceil((bottom - top) * dpr))
+    );
+
+    const step = Math.max(1, Math.round(SAMPLE_STEP * dpr));
+    const points: { x: number; y: number }[] = [];
+    for (let y = 0; y < image.height; y += step) {
+      for (let x = 0; x < image.width; x += step) {
+        if (image.data[(y * image.width + x) * 4 + 3] > 128) {
+          points.push({ x: left + x / dpr, y: top + y / dpr });
+        }
+      }
+    }
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+    return points;
+  }
+
+  /* Lay the particles out on the sampled points.
+
+     `scatter` is only ever true the first time. Afterwards the particles keep
+     their positions and velocities and simply get a new home to spring towards,
+     so a layout change slides the text instead of blowing it apart. That matters
+     on a phone: the address bar sliding in and out changes the viewport height
+     constantly while you scroll, and rebuilding on every one of those made the
+     name explode and regather over and over. */
+  function applyLayout(points: { x: number; y: number }[], scatter: boolean) {
+    for (let i = 0; i < points.length; i++) {
+      const { x, y } = points[i];
+      const existing = particles[i];
+      if (existing) {
+        existing.homeX = x;
+        existing.homeY = y;
+        continue;
+      }
+      const angle = Math.random() * Math.PI * 2;
+      const spread = scatter ? 60 + Math.random() * 180 : 0;
+      particles.push({
+        homeX: x,
+        homeY: y,
+        x: x + Math.cos(angle) * spread,
+        y: y + Math.sin(angle) * spread,
+        vx: 0,
+        vy: 0,
+        size: 0.85 + Math.random() * 0.55,
+        stiffness: STIFFNESS * (0.75 + Math.random() * 0.5),
+        phase: Math.random() * Math.PI * 2,
+        drift: 0.25 + Math.random() * 0.5,
+      });
+    }
+    if (particles.length > points.length) particles.length = points.length;
+  }
+
+  function build() {
+    resize();
+    particles = [];
+    applyLayout(sampleText(), true);
+  }
+
+  /** Re-measure after a layout change, without restarting the animation. */
+  function relayout() {
+    resize();
+    applyLayout(sampleText(), false);
+  }
+
+  function step(dt: number, time: number) {
+    const radius2 = PUSH_RADIUS * PUSH_RADIUS;
+
+    for (const p of particles) {
+      // spring back to the letterform
+      let ax = (p.homeX - p.x) * p.stiffness;
+      let ay = (p.homeY - p.y) * p.stiffness;
+
+      // the pointer pushes, with the force falling off to nothing at the edge
+      if (pointer.active) {
+        const dx = p.x - pointer.x;
+        const dy = p.y - pointer.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < radius2 && d2 > 0.01) {
+          const d = Math.sqrt(d2);
+          const falloff = 1 - d / PUSH_RADIUS;
+          const force = PUSH_FORCE * falloff * falloff;
+          ax += (dx / d) * force;
+          ay += (dy / d) * force;
+        }
+      }
+
+      // a slow breath, so a settled letter is not perfectly dead
+      ax += Math.cos(time * p.drift + p.phase) * 1.6;
+      ay += Math.sin(time * p.drift * 0.8 + p.phase) * 1.6;
+
+      // damping
+      ax -= p.vx * DAMPING;
+      ay -= p.vy * DAMPING;
+
+      p.vx += ax * dt;
+      p.vy += ay * dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+    ctx.fillStyle = colour;
+    for (const p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  let last = performance.now();
+  function frame(now: number) {
+    // Clamp the step so a backgrounded tab does not resume with one huge jump.
+    const dt = Math.min((now - last) / 1000, MAX_DELTA);
+    last = now;
+    step(dt, now / 1000);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  /* -------------------------------------------------------------- input --- */
+
+  function setPointer(clientX: number, clientY: number) {
+    const rect = canvas.getBoundingClientRect();
+    pointer.x = clientX - rect.left;
+    pointer.y = clientY - rect.top;
+    pointer.active = true;
+  }
+
+  if (!coarse) {
+    window.addEventListener('mousemove', (e) => setPointer(e.clientX, e.clientY));
+    // Without this the last cursor position keeps a hole punched in the text.
+    document.addEventListener('mouseleave', () => { pointer.active = false; });
+    window.addEventListener('blur', () => { pointer.active = false; });
+  }
+
+  window.addEventListener('touchstart', (e) => {
+    if (e.touches.length) setPointer(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches.length) setPointer(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => { pointer.active = false; }, { passive: true });
+
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+  let lastWidth = 0;
+  let lastHeight = 0;
+
+  window.addEventListener('resize', () => {
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.round(rect.width);
+    const h = Math.round(rect.height);
+    // A phone changes the height by itself, every time the address bar moves.
+    // Nothing about the text depends on it, so only react once it stops.
+    if (w === lastWidth && h === lastHeight) return;
+    lastWidth = w;
+    lastHeight = h;
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(relayout, 120);
+  });
+
+  /* --------------------------------------------------------------- start --- */
+
+  function start() {
+    build();
+    const rect = canvas.getBoundingClientRect();
+    lastWidth = Math.round(rect.width);
+    lastHeight = Math.round(rect.height);
+    if (reduceMotion) {
+      // Draw the text once, in place, and leave it alone.
+      for (const p of particles) {
+        p.x = p.homeX;
+        p.y = p.homeY;
+      }
+      draw();
+      return;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // The sampling depends on Montserrat being ready, otherwise the shapes come
+  // from the fallback face and shift once the real font lands.
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(start);
+  } else {
+    start();
+  }
+</script>
+
+<style>
+  #particle-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+</style>

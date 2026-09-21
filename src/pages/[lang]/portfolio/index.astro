@@ -1,0 +1,273 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SkillCard from '@/components/SkillCard.astro';
+import ContactIcons from '@/components/ContactIcons.astro';
+import CardFanCarousel from '@/components/ui/card-fan-carousel';
+import { useTranslations, getLocalizedPath, languages, type Lang } from '@/i18n';
+import { getCollection } from 'astro:content';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+// Get projects for current language
+const allProjects = await getCollection('projects', ({ id }) => {
+  return id.startsWith(`${lang}/`);
+});
+const projects = allProjects.sort((a, b) => a.data.order - b.data.order);
+
+const projectFanCards = projects.map((project) => {
+  const slug = project.slug.split('/').pop();
+  return {
+    title: project.data.title,
+    imageSrc: project.data.icon ?? project.data.image,
+    imageAlt: project.data.title,
+    // Straight to this project's own entry on the projects page.
+    detailHref: `/${lang}/projects/#${slug}`,
+    detailLabel: t('projects.about'),
+    githubUrl: project.data.links?.github,
+    downloadUrl: project.data.links?.custom?.url,
+    downloadLabel: project.data.links?.custom?.label,
+    isClosedSource: project.data.isClosedSource,
+    closedSourceLabel: lang === 'it' ? 'Codice non pubblico' : 'Closed source',
+    selectLabel: project.data.title,
+  };
+});
+
+// Skills data
+const languagesSkills = [
+  { icon: 'fab fa-python', iconColor: 'text-blue-500', text: t('skills.languages.python') },
+  { icon: 'fab fa-java', iconColor: 'text-orange-500', text: t('skills.languages.java') },
+  { icon: 'fas fa-c', iconColor: 'text-sky-700', text: t('skills.languages.c') },
+];
+
+const otherSkills = [
+  { icon: 'fab fa-linux', iconColor: 'text-gray-700', text: t('skills.other.linux') },
+  { icon: 'fas fa-database', iconColor: 'text-purple-500', text: t('skills.other.sql') },
+  { icon: 'fas fa-cloud', iconColor: 'text-blue-400', text: t('skills.other.cloud') },
+  { icon: 'fas fa-terminal', iconColor: 'text-gray-600', text: t('skills.other.bash') },
+];
+---
+
+<BaseLayout title={t('meta.title')} lang={lang} headerVariant="default">
+  <!-- Hero Section -->
+  <header id="home" class="min-h-screen flex items-center bg-primary-bg pt-16">
+    <div class="max-w-7xl mx-auto px-4 w-full">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+        <div class="flex-1 text-center md:text-left">
+          <h1 class="hero-text mb-4">Alex</h1>
+          <p class="text-2xl text-text mb-8">{t('hero.tagline')}</p>
+          <a href="#contact" class="btn">{t('hero.cta')}</a>
+        </div>
+        <div class="flex-1 flex justify-center">
+          <img
+            src="/images/headersecond.svg"
+            alt="Developer illustration"
+            class="max-w-md w-full"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-primary-bg">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="section-title text-center mb-12">{t('about.title')}</h2>
+      <div class="flex flex-col md:flex-row items-center gap-12">
+        <div class="flex-shrink-0">
+          <img
+            src="/images/headerpfp.svg"
+            alt="Alessandro Trysh"
+            class="w-48 h-48 md:w-64 md:h-64 rounded-full"
+            loading="lazy"
+          />
+        </div>
+        <div class="flex-1">
+          <p class="text-lg mb-4 text-text">{t('about.p1')}</p>
+          <p class="text-lg mb-4 text-text">{t('about.p2')}</p>
+          <p class="text-lg mb-8 text-text">{t('about.p3')}</p>
+          <a href="#contact" class="btn">{t('about.cta')}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="section-wave wave-secondary py-20 bg-secondary-bg">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="section-title text-center mb-12">{t('skills.title')}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <SkillCard title={t('skills.languages.title')} skills={languagesSkills} />
+        <SkillCard title={t('skills.other.title')} skills={otherSkills} />
+      </div>
+    </div>
+  </section>
+
+  <div class="wave-divider wave-divider-primary" aria-hidden="true">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path d="M0 50L60 43.3C120 37 240 23 360 31.7C480 40 600 70 720 73.3C840 77 960 53 1080 38.3C1200 23 1320 17 1380 13.3L1440 10V120H0Z"></path>
+    </svg>
+  </div>
+
+  <!-- Projects Section -->
+  <section id="projects" class="projects-section py-20 bg-primary-bg">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="projects-heading">
+        <h2 class="section-title text-center mb-4">{t('nav.projects')}</h2>
+        <p class="projects-kicker">
+          {lang === 'it'
+            ? 'Qualcuna delle cose che ho costruito.'
+            : 'A few of the things I have built.'}
+        </p>
+      </div>
+
+      <div class="project-fan-stage">
+        <CardFanCarousel cards={projectFanCards} client:load />
+      </div>
+
+      <p class="projects-more">
+        <a href={getLocalizedPath(lang, '/projects')} class="projects-more-link">
+          {lang === 'it' ? 'Tutti i progetti, con le descrizioni' : 'Every project, with its description'}
+          <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section-wave wave-secondary py-20 bg-secondary-bg">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="section-title mb-4">{t('contact.title')}</h2>
+      <p class="text-lg text-text mb-8">{t('contact.subtitle')}</p>
+      <ContactIcons />
+    </div>
+  </section>
+</BaseLayout>
+
+<!-- GSAP Animations + Active Nav -->
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Section scroll-spy, for anchor links only: page links carry their own
+  // "you are here" state, rendered server-side, and must not be cleared here.
+  const sections = document.querySelectorAll('section[id], header[id]');
+  const navLinks = document.querySelectorAll('.nav-link[href^="#"], .mobile-nav-link[href^="#"]');
+
+  function updateActiveNav() {
+    let current = 'home';
+
+    // Check if at bottom of page - activate last section
+    const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 50;
+    if (isAtBottom) {
+      current = 'contact';
+    } else {
+      sections.forEach((section) => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.scrollY >= sectionTop) {
+          current = section.getAttribute('id') || 'home';
+        }
+      });
+    }
+
+    navLinks.forEach((link) => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === `#${current}`) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNav);
+  updateActiveNav();
+
+  // Hero image animation
+  gsap.from('#home img', {
+    opacity: 0,
+    scale: 0.8,
+    duration: 1.5,
+    ease: 'power1.out',
+    scrollTrigger: {
+      trigger: '#home',
+      start: 'top 80%',
+      toggleActions: 'play none none none',
+    },
+  });
+
+  // Hero text animation
+  gsap.from('.hero-text', {
+    opacity: 0,
+    y: -50,
+    duration: 1,
+    ease: 'power1.out',
+    scrollTrigger: {
+      trigger: '.hero-text',
+      start: 'top 80%',
+    },
+  });
+
+  // About image animation
+  gsap.from('#about img', {
+    opacity: 0,
+    x: -50,
+    duration: 2,
+    ease: 'power1.out',
+    scrollTrigger: {
+      trigger: '#about',
+      start: 'top 85%',
+      toggleActions: 'play none none none',
+    },
+  });
+
+  // About text animation
+  gsap.from('#about .text-lg', {
+    opacity: 0,
+    y: 50,
+    duration: 1,
+    stagger: 0.3,
+    ease: 'power1.out',
+    scrollTrigger: {
+      trigger: '#about',
+      start: 'top 85%',
+      toggleActions: 'play none none none',
+    },
+  });
+
+  // Skills animation
+  gsap.from('.skill-card li', {
+    opacity: 0,
+    x: -50,
+    duration: 0.8,
+    stagger: 0.15,
+    ease: 'power1.out',
+    scrollTrigger: {
+      trigger: '#skills',
+      start: 'top 80%',
+      toggleActions: 'play none none none',
+    },
+  });
+
+  // Projects animation
+  gsap.from('.bento-card', {
+    opacity: 0,
+    y: 30,
+    duration: 0.8,
+    stagger: 0.2,
+    ease: 'power1.out',
+    clearProps: 'transform',
+    scrollTrigger: {
+      trigger: '#projects',
+      start: 'top 80%',
+      toggleActions: 'play none none none',
+    },
+  });
+</script>

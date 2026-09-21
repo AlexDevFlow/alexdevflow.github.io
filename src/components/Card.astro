@@ -1,0 +1,127 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  /** App icons shown in place of an illustration. */
+  icons?: string[];
+  imageSrc?: string;
+  imageAlt?: string;
+  imageLoading?: 'eager' | 'lazy';
+  imageFetchPriority?: 'high' | 'low' | 'auto';
+  class?: string;
+}
+
+const {
+  href,
+  title,
+  icons,
+  imageSrc,
+  imageAlt = '',
+  imageLoading = 'eager',
+  imageFetchPriority = 'high',
+  class: className,
+} = Astro.props;
+---
+
+<a href={href} class:list={['home-card', className]}>
+  {icons ? (
+    <div class="card-icon card-icon--stack" aria-hidden="true">
+      {icons.map((src) => (
+        <img src={src} alt="" width="256" height="256" loading={imageLoading} decoding="async" />
+      ))}
+    </div>
+  ) : imageSrc && (
+    <div class="card-icon">
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        width="420"
+        height="420"
+        loading={imageLoading}
+        decoding="async"
+        fetchpriority={imageFetchPriority}
+      />
+    </div>
+  )}
+  <h2 class="card-title">{title}</h2>
+</a>
+
+<style>
+  .home-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 200px;
+  }
+
+  .home-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .home-card:hover .card-icon {
+    transform: translateY(-4px) scale(1.04);
+  }
+
+  .card-icon {
+    margin-bottom: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .card-icon img {
+    display: block;
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+  }
+
+  /* Three marks side by side, leaning apart a little on hover. */
+  .card-icon--stack {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 140px;
+  }
+
+  .card-icon--stack img {
+    width: 62px;
+    height: 62px;
+    transition: transform 0.3s ease;
+  }
+
+  .home-card:hover .card-icon--stack img:first-child {
+    transform: translateX(-7px) rotate(-7deg);
+  }
+
+  .home-card:hover .card-icon--stack img:last-child {
+    transform: translateX(7px) rotate(7deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-icon,
+    .card-icon--stack img {
+      transition: none;
+    }
+
+    .home-card:hover .card-icon,
+    .home-card:hover .card-icon--stack img {
+      transform: none;
+    }
+  }
+
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-align: center;
+  }
+</style>

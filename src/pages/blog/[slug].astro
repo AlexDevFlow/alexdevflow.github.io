@@ -1,0 +1,37 @@
+---
+import BlogPost from '@/layouts/BlogPost.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+
+  return posts.map((post) => {
+    // Extract slug without the language prefix (e.g., "en/my-post" -> "my-post")
+    const [, ...slugParts] = post.slug.split('/');
+    const slug = slugParts.join('/');
+
+    return {
+      params: { slug },
+      props: { post },
+    };
+  });
+}
+
+const { post } = Astro.props;
+const lang = 'en';
+const { Content } = await post.render();
+
+const { title, description, publishDate, updatedDate, author, tags } = post.data;
+---
+
+<BlogPost
+  title={title}
+  description={description}
+  publishDate={publishDate}
+  updatedDate={updatedDate}
+  author={author}
+  tags={tags}
+  lang={lang}
+>
+  <Content />
+</BlogPost>

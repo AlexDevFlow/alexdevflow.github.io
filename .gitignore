@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Astro
+.astro/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Design tooling scratch (screenshots, logs)
+.impeccable/
+
+# Newer pnpm writes this out on install, with placeholder values. The CI runs
+# pnpm 9, which refuses a workspace file that has no packages field, so the
+# deploy fails on it. This repo is not a workspace.
+pnpm-workspace.yaml

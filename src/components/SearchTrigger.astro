@@ -1,0 +1,95 @@
+---
+import { useTranslations, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<button id="search-toggle" class="search-toggle" type="button" aria-label={t('search.label')} aria-keyshortcuts="Control+K Meta+K">
+  <svg class="search-toggle-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+    <circle cx="8.75" cy="8.75" r="5.75" fill="none" stroke="currentColor" stroke-width="1.9" />
+    <path d="m13.2 13.2 4 4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+  </svg>
+  <span class="search-toggle-label">{t('search.label')}</span>
+  <kbd class="search-toggle-kbd" data-search-shortcut aria-hidden="true">⌘K</kbd>
+</button>
+
+<style is:global>
+  .search-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--primary-color);
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-toggle:hover {
+    color: var(--accent-strong);
+  }
+
+  .search-toggle:focus-visible {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 2px;
+  }
+
+  .search-toggle-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  /* Below the widest breakpoint the trigger is the icon alone: the navbar is tight. */
+  .search-toggle-label,
+  .search-toggle-kbd {
+    display: none;
+  }
+
+  .search-toggle-kbd {
+    padding: 3px 6px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.65);
+    color: var(--text-color);
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  @media (min-width: 1024px) {
+    .search-toggle {
+      padding: 0 8px 0 14px;
+      background: rgba(255, 255, 255, 0.7);
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .search-toggle:hover {
+      border-color: var(--accent-strong);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-toggle-label {
+      display: inline;
+      margin-right: 18px;
+    }
+
+    .search-toggle-kbd {
+      display: inline-block;
+    }
+  }
+</style>

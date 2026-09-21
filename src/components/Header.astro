@@ -1,0 +1,193 @@
+---
+import { useTranslations, getLocalizedPath, type Lang } from '@/i18n';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import SearchTrigger from './SearchTrigger.astro';
+
+interface Props {
+  lang: Lang;
+  variant?: 'default' | 'portfolio' | 'minimal';
+  hideLanguageSwitcher?: boolean;
+}
+
+const { lang, variant = 'default', hideLanguageSwitcher = false } = Astro.props;
+const t = useTranslations(lang);
+
+const isPortfolio = variant === 'portfolio';
+
+const navItems = isPortfolio
+  ? [
+      { href: '#home', label: t('nav.home') },
+      { href: '#about', label: t('nav.about') },
+      { href: '#skills', label: t('nav.skills') },
+      { href: '#projects', label: t('nav.projects') },
+      { href: '#contact', label: t('nav.contact') },
+    ]
+  : [
+      { href: getLocalizedPath(lang, '/'), label: t('nav.home') },
+      { href: getLocalizedPath(lang, '/portfolio'), label: t('nav.portfolio') },
+      { href: getLocalizedPath(lang, '/projects'), label: t('nav.projects') },
+      { href: '/blog', label: t('nav.blog') },
+    ];
+
+// Which nav entry is the page you are on. Sub-pages count: /blog/a-post marks "Blog".
+const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const homeHref = getLocalizedPath(lang, '/');
+
+function isCurrent(href: string): boolean {
+  if (isPortfolio || href.startsWith('#')) return false;
+  const target = href.replace(/\/+$/, '') || '/';
+  if (target === homeHref) return here === target;
+  return here === target || here.startsWith(`${target}/`);
+}
+---
+
+{variant !== 'minimal' && (
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href={getLocalizedPath(lang, '/')} class="text-xl font-bold font-heading text-primary">
+        Alex
+      </a>
+
+      <!-- Desktop Navigation -->
+      <div class="nav-links hidden md:flex">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={['nav-link', { active: isCurrent(item.href) }]}
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+
+      <div class="flex items-center gap-2 md:gap-3">
+        <SearchTrigger lang={lang} />
+        {!hideLanguageSwitcher && <LanguageSwitcher currentLang={lang} class="hidden md:inline-block" />}
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          id="mobile-menu-toggle"
+          class="hamburger md:hidden"
+          aria-label={t('a11y.openMenu')}
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu-overlay" class="mobile-menu-overlay"></div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-header">
+      {!hideLanguageSwitcher && <LanguageSwitcher currentLang={lang} />}
+      <button
+        id="mobile-menu-close"
+        class="mobile-menu-close"
+        aria-label={t('a11y.closeMenu')}
+      >
+        &times;
+      </button>
+    </div>
+
+    <div class="mobile-menu-nav">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={['mobile-nav-link', { active: isCurrent(item.href) }]}
+          aria-current={isCurrent(item.href) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+    </div>
+  </div>
+)}
+
+<script>
+  const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuClose = document.getElementById('mobile-menu-close');
+  const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+  function openMobileMenu() {
+    mobileMenu?.classList.add('active');
+    mobileMenuOverlay?.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    mobileMenuToggle?.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeMobileMenu() {
+    mobileMenu?.classList.remove('active');
+    mobileMenuOverlay?.classList.remove('active');
+    document.body.style.overflow = '';
+    mobileMenuToggle?.setAttribute('aria-expanded', 'false');
+  }
+
+  mobileMenuToggle?.addEventListener('click', openMobileMenu);
+  mobileMenuClose?.addEventListener('click', closeMobileMenu);
+  mobileMenuOverlay?.addEventListener('click', closeMobileMenu);
+
+  // Close menu on nav link click
+  document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetId = (this as HTMLAnchorElement).getAttribute('href')?.substring(1);
+      const targetElement = targetId ? document.getElementById(targetId) : null;
+
+      if (targetElement) {
+        closeMobileMenu();
+        window.scrollTo({
+          top: targetElement.offsetTop - 64,
+          behavior: 'smooth',
+        });
+      }
+    });
+  });
+</script>
+
+<style>
+  .mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu-close {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1.75rem;
+    line-height: 1;
+    padding: 0.5rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+
+  .mobile-menu-close:hover,
+  .mobile-menu-close:focus-visible {
+    opacity: 1;
+  }
+</style>
