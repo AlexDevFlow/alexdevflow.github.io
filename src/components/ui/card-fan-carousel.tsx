@@ -94,10 +94,6 @@ function formatStars(count: number) {
 
 export default function SocialCards({ cards }: SocialCardsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isAnimating = useRef(false);
-  const hasEntered = useRef(false);
-  const directionRef = useRef<"left" | "right" | null>(null);
-  const prevVisible = useRef<Set<number>>(new Set());
 
   const totalCards = cards.length;
   const needsPagination = totalCards > MAX_VISIBLE;
@@ -118,9 +114,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
   }, [totalCards, needsPagination]);
 
   const cycle = useCallback((direction: "left" | "right") => {
-    if (isAnimating.current || totalCards < 2) return;
-    isAnimating.current = true;
-    directionRef.current = direction;
+    if (totalCards < 2) return;
     setCenterIndex((prev) => {
       const next = direction === "right" ? (prev + 1) % totalCards : (prev - 1 + totalCards) % totalCards;
       setActiveIndex(next);
@@ -129,8 +123,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
   }, [totalCards]);
 
   const selectCard = useCallback((index: number) => {
-    if (isAnimating.current || index === activeIndex) return;
-    isAnimating.current = true;
+    if (index === activeIndex) return;
     setActiveIndex(index);
     setCenterIndex(index);
   }, [activeIndex]);
@@ -214,6 +207,8 @@ export default function SocialCards({ cards }: SocialCardsProps) {
     );
   };
 
+  // The fan is drawn in place and stays put: no entrance, no sliding when
+  // the project changes, no spreading under the pointer.
   useEffect(() => {
     const container = containerRef.current;
     if (!container || !totalCards) return;
@@ -222,178 +217,44 @@ export default function SocialCards({ cards }: SocialCardsProps) {
     if (!cardElements.length) return;
 
     const visibleMap = getVisibleMap(centerIndex);
-    const previouslyVisible = prevVisible.current;
-    const direction = directionRef.current;
-    const isFirstMount = !hasEntered.current;
-    const hMult = getHeightMultiplier(window.innerWidth);
     const slotCount = needsPagination ? MAX_VISIBLE : totalCards;
-    const config = (slot: number) => getSlotConfig(slotCount, slot);
     const middleSlot = slotCount >> 1;
-    const solo = isSolo();
 
-    const layoutFor = (slot: number) => {
-      if (solo) {
-        const centred = slot === middleSlot;
-        return { x: "0rem", y: "0rem", rotation: 0, scale: centred ? 1 : 0.86, opacity: centred ? 1 : 0, zIndex: centred ? 10 : 0 };
-      }
-      const { x, y, rot, scale, zIndex } = config(slot);
-      return {
-        x: `${x * getResponsiveMultiplier(window.innerWidth)}rem`,
-        y: `${y * getHeightMultiplier(window.innerWidth)}rem`,
-        rotation: rot,
-        scale,
-        opacity: 1,
-        zIndex,
-      };
-    };
-
-    if (isFirstMount) isAnimating.current = true;
-
-    let completedCount = 0;
-    const visibleCount = visibleMap.size;
-    const onCardDone = () => {
-      if (++completedCount >= visibleCount) {
-        isAnimating.current = false;
-        if (isFirstMount) hasEntered.current = true;
-      }
-    };
-
-    cardElements.forEach((card, cardIndex) => {
-      const slot = visibleMap.get(cardIndex);
-      const wasVisible = previouslyVisible.has(cardIndex);
-
-      if (slot !== undefined) {
-        const { y } = config(slot);
-        const target = layoutFor(slot);
-
-        if (isFirstMount) {
-          gsap.set(card, { x: 0, y: `${12 * hMult}rem`, rotation: 0, scale: 0.5, opacity: 0 });
-          gsap.to(card, { ...target, duration: 1.2, ease: "elastic.out(1.05,.78)", delay: 0.2 + slot * 0.06, onComplete: onCardDone });
-        } else if (!wasVisible) {
-          const enterX = direction === "right" ? 40 : -40;
-          gsap.set(card, { x: `${enterX}rem`, y: `${y * hMult}rem`, rotation: direction === "right" ? 30 : -30, scale: 0.5, opacity: 0 });
-          gsap.to(card, { ...target, duration: 0.6, ease: "power2.out", onComplete: onCardDone });
-        } else {
-          gsap.to(card, { ...target, duration: 0.5, ease: "power2.out", onComplete: onCardDone });
-        }
-      } else if (wasVisible) {
-        const exitX = direction === "right" ? -40 : 40;
-        gsap.to(card, { x: `${exitX}rem`, opacity: 0, scale: 0.5, rotation: direction === "right" ? -30 : 30, duration: 0.4, ease: "power2.in", zIndex: 0 });
-      } else if (isFirstMount) {
-        gsap.set(card, { opacity: 0, scale: 0.3, x: 0, y: 0, zIndex: 0 });
-      }
-    });
-
-    prevVisible.current = new Set(visibleMap.keys());
-
-    const visibleEntries: { el: HTMLElement; slot: number }[] = [];
-    cardElements.forEach((el, i) => {
-      const slot = visibleMap.get(i);
-      if (slot !== undefined) visibleEntries.push({ el, slot });
-    });
-    visibleEntries.sort((a, b) => a.slot - b.slot);
-
-    let activeSlot: number | null = null;
-    let leaveTimer: ReturnType<typeof setTimeout> | null = null;
-    const centerSlot = visibleEntries.length >> 1;
-
-    const updateHoverLayout = (hoveredSlot: number | null) => {
-      if (isSolo()) {
-        visibleEntries.forEach(({ el, slot }) => {
-          const t = layoutFor(slot);
-          gsap.to(el, { ...t, duration: 0.4, ease: "power2.out", overwrite: "auto" });
-        });
-        return;
-      }
-
+    const layout = () => {
+      const solo = isSolo();
       const mult = getResponsiveMultiplier(window.innerWidth);
-      const hM = getHeightMultiplier(window.innerWidth);
+      const hMult = getHeightMultiplier(window.innerWidth);
 
-      visibleEntries.forEach(({ el, slot }) => {
-        const base = config(slot);
-        let targetX = base.x * mult;
-        let targetY = base.y * hM;
-        let targetRot = base.rot;
-        let targetScale = base.scale;
-        let delay = 0;
+      cardElements.forEach((card, cardIndex) => {
+        const slot = visibleMap.get(cardIndex);
 
-        if (hoveredSlot !== null) {
-          const distance = Math.abs(slot - hoveredSlot);
-          delay = distance * 0.02;
-
-          if (slot === hoveredSlot) {
-            targetY -= 2.5 * hM;
-            targetScale *= 1.08;
-          } else {
-            const normalized = centerSlot > 0 ? (slot - centerSlot) / centerSlot : 0;
-            const pushStrength = 8 * (1 - Math.abs(normalized)) * (1 + 0.2 * Math.max(0, 3 - distance));
-
-            if (slot < hoveredSlot) {
-              targetX -= pushStrength * mult;
-              targetRot -= 3 / (distance + 1);
-            } else {
-              targetX += pushStrength * mult;
-              targetRot += 3 / (distance + 1);
-            }
-
-            if (slot === visibleEntries.length - 1 && hoveredSlot < centerSlot) targetY -= 1 * hM;
-            if (slot === 0 && hoveredSlot > centerSlot) targetY -= 1 * hM;
-          }
-        } else {
-          delay = Math.abs(slot - centerSlot) * 0.02;
+        // Out of the fan, or beside the one card shown on a phone: hidden,
+        // so it cannot be clicked or tabbed to where nobody can see it.
+        if (slot === undefined || (solo && slot !== middleSlot)) {
+          gsap.set(card, { x: 0, y: 0, rotation: 0, scale: 0.86, autoAlpha: 0, zIndex: 0 });
+          return;
         }
 
-        gsap.to(el, {
-          x: `${targetX}rem`,
-          y: `${targetY}rem`,
-          rotation: targetRot,
-          scale: targetScale,
-          duration: 0.5,
-          delay,
-          ease: "elastic.out(1,.75)",
-          overwrite: "auto",
+        if (solo) {
+          gsap.set(card, { x: 0, y: 0, rotation: 0, scale: 1, autoAlpha: 1, zIndex: 10 });
+          return;
+        }
+
+        const { x, y, rot, scale, zIndex } = getSlotConfig(slotCount, slot);
+        gsap.set(card, {
+          x: `${x * mult}rem`,
+          y: `${y * hMult}rem`,
+          rotation: rot,
+          scale,
+          autoAlpha: 1,
+          zIndex,
         });
-        gsap.set(el, { zIndex: base.zIndex });
       });
     };
 
-    const enterHandlers = visibleEntries.map(({ el, slot }) => {
-      const handler = () => {
-        if (isAnimating.current || isSolo()) return;
-        if (leaveTimer) {
-          clearTimeout(leaveTimer);
-          leaveTimer = null;
-        }
-        if (activeSlot !== slot) {
-          activeSlot = slot;
-          updateHoverLayout(slot);
-        }
-      };
-      el.addEventListener("mouseenter", handler);
-      return { el, handler };
-    });
-
-    const onMouseLeave = () => {
-      if (isAnimating.current) return;
-      if (leaveTimer) clearTimeout(leaveTimer);
-      leaveTimer = setTimeout(() => {
-        activeSlot = null;
-        updateHoverLayout(null);
-      }, 50);
-    };
-    container.addEventListener("mouseleave", onMouseLeave);
-
-    const onResize = () => {
-      if (!isAnimating.current) updateHoverLayout(activeSlot);
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      enterHandlers.forEach(({ el, handler }) => el.removeEventListener("mouseenter", handler));
-      container.removeEventListener("mouseleave", onMouseLeave);
-      window.removeEventListener("resize", onResize);
-      if (leaveTimer) clearTimeout(leaveTimer);
-    };
+    layout();
+    window.addEventListener("resize", layout);
+    return () => window.removeEventListener("resize", layout);
   }, [centerIndex, totalCards, getVisibleMap, needsPagination]);
 
   if (!totalCards) return null;
@@ -450,7 +311,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
           </button>
           <div className="flex items-center gap-2">
             {cards.map((_, i) => (
-              <span key={i} className={`h-2 w-2 rounded-full transition-all duration-300 ${i === activeIndex ? "scale-[1.3] bg-primary/70" : "bg-primary/15"}`} />
+              <span key={i} className={`h-2 w-2 rounded-full ${i === activeIndex ? "scale-[1.3] bg-primary/70" : "bg-primary/15"}`} />
             ))}
           </div>
           <button className={`${ARROW_CLASSES} h-10 w-10 md:h-12 md:w-12`} onClick={() => cycle("right")} aria-label="Next project">

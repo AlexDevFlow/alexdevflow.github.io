@@ -151,13 +151,8 @@ const otherSkills = [
   </section>
 </BaseLayout>
 
-<!-- GSAP Animations + Active Nav -->
+<!-- Active Nav -->
 <script>
-  import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
-
   // Section scroll-spy, for anchor links only: page links carry their own
   // "you are here" state, rendered server-side, and must not be cleared here.
   const sections = document.querySelectorAll('section[id], header[id]');
@@ -189,85 +184,4 @@ const otherSkills = [
 
   window.addEventListener('scroll', updateActiveNav);
   updateActiveNav();
-
-  // Hero image animation
-  gsap.from('#home img', {
-    opacity: 0,
-    scale: 0.8,
-    duration: 1.5,
-    ease: 'power1.out',
-    scrollTrigger: {
-      trigger: '#home',
-      start: 'top 80%',
-      toggleActions: 'play none none none',
-    },
-  });
-
-  // Hero text animation
-  gsap.from('.hero-text', {
-    opacity: 0,
-    y: -50,
-    duration: 1,
-    ease: 'power1.out',
-    scrollTrigger: {
-      trigger: '.hero-text',
-      start: 'top 80%',
-    },
-  });
-
-  // About image animation
-  gsap.from('#about img', {
-    opacity: 0,
-    x: -50,
-    duration: 2,
-    ease: 'power1.out',
-    scrollTrigger: {
-      trigger: '#about',
-      start: 'top 85%',
-      toggleActions: 'play none none none',
-    },
-  });
-
-  // About text animation
-  gsap.from('#about .text-lg', {
-    opacity: 0,
-    y: 50,
-    duration: 1,
-    stagger: 0.3,
-    ease: 'power1.out',
-    scrollTrigger: {
-      trigger: '#about',
-      start: 'top 85%',
-      toggleActions: 'play none none none',
-    },
-  });
-
-  // Skills animation
-  gsap.from('.skill-card li', {
-    opacity: 0,
-    x: -50,
-    duration: 0.8,
-    stagger: 0.15,
-    ease: 'power1.out',
-    scrollTrigger: {
-      trigger: '#skills',
-      start: 'top 80%',
-      toggleActions: 'play none none none',
-    },
-  });
-
-  // Projects animation
-  gsap.from('.bento-card', {
-    opacity: 0,
-    y: 30,
-    duration: 0.8,
-    stagger: 0.2,
-    ease: 'power1.out',
-    clearProps: 'transform',
-    scrollTrigger: {
-      trigger: '#projects',
-      start: 'top 80%',
-      toggleActions: 'play none none none',
-    },
-  });
 </script>

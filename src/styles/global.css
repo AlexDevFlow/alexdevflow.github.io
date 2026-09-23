@@ -331,11 +331,10 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--primary-color);
   font-weight: 600;
   text-decoration: none;
-  transition: color 0.2s ease, border-color 0.2s ease, gap 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .projects-more-link:hover {
-  gap: 0.85rem;
   border-color: var(--accent-strong);
   color: var(--accent-strong);
 }
@@ -372,7 +371,6 @@ h1, h2, h3, h4, h5, h6 {
   background: white;
   box-shadow: 0 18px 42px rgba(32, 26, 18, 0.18);
   transform-origin: 50% 90%;
-  will-change: transform, opacity;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -494,12 +492,11 @@ h1, h2, h3, h4, h5, h6 {
 .project-fan-link {
   background: var(--button-bg);
   color: white;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .project-fan-link:hover {
   background: var(--button-hover);
-  transform: translateY(-1px);
 }
 
 .project-fan-link--ghost {
@@ -663,11 +660,10 @@ h1, h2, h3, h4, h5, h6 {
 .contact-icon {
   font-size: 3rem;
   color: var(--primary-color);
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .contact-icon:hover {
-  transform: scale(1.1);
   color: var(--accent-color);
 }
 
