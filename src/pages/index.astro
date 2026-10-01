@@ -1,10 +1,18 @@
 ---
-// Instant redirect to /en/ (or /it/ for Italian users)
+// Instant redirect to /en/ (or /it/ for Italian users). The canonical and the
+// alternates tell crawlers which page this one stands for: without them the
+// root is an empty redirect with nothing to index.
+const site = Astro.site;
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <title>Alessandro Trysh - Full Stack Developer</title>
+    <link rel="canonical" href={new URL('/en/', site)} />
+    <link rel="alternate" hreflang="en" href={new URL('/en/', site)} />
+    <link rel="alternate" hreflang="it" href={new URL('/it/', site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/en/', site)} />
     <meta http-equiv="refresh" content="0;url=/en/" />
     <script is:inline>
       const saved = localStorage.getItem('alexdevflow-lang');

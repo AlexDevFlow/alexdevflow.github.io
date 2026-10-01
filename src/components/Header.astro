@@ -26,12 +26,12 @@ const navItems = isPortfolio
       { href: getLocalizedPath(lang, '/'), label: t('nav.home') },
       { href: getLocalizedPath(lang, '/portfolio'), label: t('nav.portfolio') },
       { href: getLocalizedPath(lang, '/projects'), label: t('nav.projects') },
-      { href: '/blog', label: t('nav.blog') },
+      { href: '/blog/', label: t('nav.blog') },
     ];
 
 // Which nav entry is the page you are on. Sub-pages count: /blog/a-post marks "Blog".
 const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const homeHref = getLocalizedPath(lang, '/');
+const homeHref = getLocalizedPath(lang, '/').replace(/\/+$/, '');
 
 function isCurrent(href: string): boolean {
   if (isPortfolio || href.startsWith('#')) return false;

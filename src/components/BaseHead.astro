@@ -9,6 +9,13 @@ interface Props {
 
 const { title, description, lang } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// /en/... and /it/... are the same page in two languages: say so, or Google
+// may take one for a duplicate of the other.
+const localized = Astro.url.pathname.match(/^\/(en|it)(\/.*)$/);
+const alternates = localized
+  ? ['en', 'it'].map((l) => ({ hreflang: l, href: new URL(`/${l}${localized[2]}`, Astro.site) }))
+  : [];
 ---
 
 <meta charset="UTF-8" />
@@ -21,6 +28,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <meta name="theme-color" content="#f1ece2" />
 <link rel="canonical" href={canonicalURL} />
+{alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+{localized && <link rel="alternate" hreflang="x-default" href={new URL(`/en${localized[2]}`, Astro.site)} />}
 
 <!-- Preconnect to Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />

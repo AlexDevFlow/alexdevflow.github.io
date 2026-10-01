@@ -11,7 +11,10 @@ export default defineConfig({
     react(),
     tailwind(),
     sitemap({
-      filter: (page) => !page.includes('/fiorista/'),
+      // The root only redirects to /en/ or /it/: listing it would offer
+      // Google a URL that is never indexed.
+      filter: (page) =>
+        !page.includes('/fiorista/') && page !== 'https://alexdevflow.github.io/',
     }),
   ],
   markdown: {
