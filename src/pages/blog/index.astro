@@ -18,7 +18,12 @@ const posts = allPosts.sort(
 );
 ---
 
-<BaseLayout title={`${t('blog.title')} | Alessandro Trysh`} lang={lang} hideLanguageSwitcher={true}>
+<BaseLayout
+  title={`${t('blog.title')} | Alessandro Trysh`}
+  description={t('blog.subtitle')}
+  lang={lang}
+  hideLanguageSwitcher={true}
+>
   <div class="blog-page">
     <header class="blog-header">
       <h1 class="blog-title">{t('blog.title')}</h1>

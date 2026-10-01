@@ -31,16 +31,17 @@ const t = useTranslations(lang);
     <header class="home-header">
       <h1 class="home-title">Alex</h1>
       <p class="home-subtitle">{t('home.subtitle')}</p>
+      <p class="home-name">Alessandro Trysh · Full Stack Developer</p>
     </header>
 
     <div class="cards-container">
       <Card
-        href={`/${lang}/portfolio`}
+        href={`/${lang}/portfolio/`}
         title={t('home.cardPortfolio')}
         imageSrc="/images/home/portfolio.webp"
       />
       <Card
-        href={`/${lang}/projects`}
+        href={`/${lang}/projects/`}
         title={t('home.cardProjects')}
         icons={[
           '/images/projects/marks/glimpse.svg',
@@ -49,7 +50,7 @@ const t = useTranslations(lang);
         ]}
       />
       <Card
-        href="/blog"
+        href="/blog/"
         title={t('home.cardBlog')}
         imageSrc="/images/home/blog.webp"
       />
@@ -97,6 +98,15 @@ const t = useTranslations(lang);
   .home-subtitle {
     font-size: 1.2rem;
     color: var(--text-color);
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-name {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    opacity: 0.8;
     position: relative;
     z-index: 1;
   }

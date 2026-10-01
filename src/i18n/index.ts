@@ -11,9 +11,10 @@ export function useTranslations(lang: Lang) {
 }
 
 export function getLocalizedPath(lang: Lang, path: string): string {
-  // Remove leading slash if present, then add lang prefix
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  return `/${lang}/${cleanPath}`.replace(/\/+/g, '/').replace(/\/$/, '') || `/${lang}`;
+  // Lang prefix plus a trailing slash: pages are built as directories, so
+  // /en/portfolio would only 301 to /en/portfolio/.
+  const cleanPath = path.replace(/^\/+|\/+$/g, '');
+  return cleanPath ? `/${lang}/${cleanPath}/` : `/${lang}/`;
 }
 
 export function getCurrentPath(url: URL): string {
